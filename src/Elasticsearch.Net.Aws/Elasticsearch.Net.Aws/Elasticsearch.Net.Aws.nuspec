@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Elasticsearch.Net.Aws</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://raw.githubusercontent.com/bcuff/elasticsearch-net-aws/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/bcuff/elasticsearch-net-aws</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>elasticsearch elastic search aws amazon</tags>
+  </metadata>
+</package>

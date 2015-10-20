@@ -51,6 +51,7 @@
     <Compile Include="StringUtil.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Elasticsearch.Net.Aws.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
