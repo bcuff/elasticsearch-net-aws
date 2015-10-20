@@ -6,6 +6,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -75,7 +76,7 @@ namespace Elasticsearch.Net.Aws
             result.Append('\n');
             result.Append(request.RequestUri.AbsolutePath);
             result.Append('\n');
-            result.Append(request.RequestUri.Query);
+            result.Append(request.RequestUri.GetCanonicalQueryString());
             result.Append('\n');
             WriteCanonicalHeaders(canonicalHeaders, result);
             result.Append('\n');
@@ -128,6 +129,57 @@ namespace Elasticsearch.Net.Aws
                 output.Append(pair.Key.ToLowerInvariant());
                 started = true;
             }
+        }
+
+        public static string GetCanonicalQueryString(this Uri uri)
+        {
+            if (string.IsNullOrWhiteSpace(uri.Query)) return string.Empty;
+            var queryParams = HttpUtility.ParseQueryString(uri.Query);
+            var q = from string key in queryParams
+                    orderby key
+                    from value in queryParams.GetValues(key)
+                    select new { key, value };
+
+            var output = new StringBuilder();
+            foreach (var param in q)
+            {
+                if (output.Length > 0) output.Append('&');
+                output.WriteEncoded(param.key);
+                output.Append('=');
+                output.WriteEncoded(param.value);
+            }
+            return output.ToString();
+        }
+
+        private static void WriteEncoded(this StringBuilder output, string value)
+        {
+            for (var i = 0; i < value.Length; ++i)
+            {
+                if (value[i].RequiresEncoding())
+                {
+                    output.Append(Uri.HexEscape(value[i]));
+                }
+                else
+                {
+                    output.Append(value[i]);
+                }
+            }
+        }
+
+        private static bool RequiresEncoding(this char value)
+        {
+            if ('A' <= value && value <= 'Z') return false;
+            if ('a' <= value && value <= 'z') return false;
+            if ('0' <= value && value <= '9') return false;
+            switch (value)
+            {
+                case '-':
+                case '_':
+                case '.':
+                case '~':
+                    return false;
+            }
+            return true;
         }
 
         static readonly byte[] _emptyBytes = new byte[0];

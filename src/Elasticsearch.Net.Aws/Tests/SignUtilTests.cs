@@ -83,5 +83,25 @@ namespace Tests
             Assert.IsNotNullOrEmpty(auth);
             Trace.WriteLine("Authorize: " + auth);
         }
+
+        [Test]
+        public void GetCanonicalQueryString_should_match_sample()
+        {
+            const string before = ""
+                + "X-Amz-Date=20110909T233600Z"
+                + "&X-Amz-SignedHeaders=content-type%3Bhost%3Bx-amz-date"
+                + "&Action=ListUsers"
+                + "&Version=2010-05-08"
+                + "&X-Amz-Algorithm=AWS4-HMAC-SHA256"
+                + "&X-Amz-Credential=AKIDEXAMPLE%2F20110909%2Fus-east-1%2Fiam%2Faws4_request";
+
+            var canonicalQueryString = new Uri("http://foo.com?" + before).GetCanonicalQueryString();
+            const string expected = "Action=ListUsers&Version=2010-05-08&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIDEXAMPLE%2F20110909%2Fus-east-1%2Fiam%2Faws4_request&X-Amz-Date=20110909T233600Z&X-Amz-SignedHeaders=content-type%3Bhost%3Bx-amz-date";
+
+            Trace.WriteLine("Actual:   " + canonicalQueryString);
+            Trace.WriteLine("Expected: " + expected);
+
+            Assert.AreEqual(expected, canonicalQueryString);
+        }
     }
 }
