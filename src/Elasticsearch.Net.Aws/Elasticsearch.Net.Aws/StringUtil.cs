@@ -82,7 +82,7 @@ namespace Elasticsearch.Net.Aws
             var result = new StringBuilder();
             result.Append(request.Method);
             result.Append('\n');
-            result.Append(request.RequestUri.AbsolutePath);
+            result.Append(request.RequestUri.AbsolutePath.Replace(":", Uri.HexEscape(':')));
             result.Append('\n');
             result.Append(request.RequestUri.Query);
             result.Append('\n');
