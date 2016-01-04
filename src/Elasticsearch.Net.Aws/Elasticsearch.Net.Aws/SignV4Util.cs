@@ -21,7 +21,9 @@ namespace Elasticsearch.Net.Aws
             var amzDate = date.ToString("yyyyMMddTHHmmssZ");
             request.Headers["X-Amz-Date"] = amzDate;
             var signingKey = GetSigningKey(secretKey, dateStamp, region, service);
-            var signature = signingKey.GetHmacSha256Hash(GetStringToSign(request, body, region, service)).ToLowercaseHex();
+            var stringToSign = GetStringToSign(request, body, region, service);
+            Debug.Write("========== String to Sign ==========\r\n{0}\r\n========== String to Sign ==========\r\n", stringToSign);
+            var signature = signingKey.GetHmacSha256Hash(stringToSign).ToLowercaseHex();
             var auth = string.Format(
                 "AWS4-HMAC-SHA256 Credential={0}/{1}, SignedHeaders={2}, Signature={3}",
                 accessKey,
@@ -52,6 +54,7 @@ namespace Elasticsearch.Net.Aws
         public static string GetStringToSign(HttpWebRequest request, byte[] data, string region, string service)
         {
             var canonicalRequest = GetCanonicalRequest(request, data);
+            Debug.Write("========== Canonical Request ==========\r\n{0}\r\n========== Canonical Request ==========\r\n", canonicalRequest);
             var awsDate = request.Headers["x-amz-date"];
             Debug.Assert(Regex.IsMatch(awsDate, @"\d{8}T\d{6}Z"));
             var datePart = awsDate.Split(_datePartSplitChars, 2)[0];
@@ -74,7 +77,7 @@ namespace Elasticsearch.Net.Aws
             var result = new StringBuilder();
             result.Append(request.Method);
             result.Append('\n');
-            result.Append(request.RequestUri.AbsolutePath.Replace(":", Uri.HexEscape(':')));
+            result.Append(GetPath(request.RequestUri));
             result.Append('\n');
             result.Append(request.RequestUri.GetCanonicalQueryString());
             result.Append('\n');
@@ -84,6 +87,13 @@ namespace Elasticsearch.Net.Aws
             result.Append('\n');
             WriteRequestPayloadHash(data, result);
             return result.ToString();
+        }
+
+        private static string GetPath(Uri uri)
+        {
+            var path = uri.AbsolutePath;
+            if (path.Length == 0) return "/";
+            return path.Replace(":", Uri.HexEscape(':'));
         }
 
         private static Dictionary<string,string> GetCanonicalHeaders(this HttpWebRequest request)
