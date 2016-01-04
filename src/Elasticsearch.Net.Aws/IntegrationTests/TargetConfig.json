@@ -1,0 +1,6 @@
+﻿{
+	"endpoint": "<your aws elasticsearch service endpoint>",
+	"accessKey": "<your access key>",
+	"secretKey": "<your secret key>",
+	"region": "us-east-1"
+}
