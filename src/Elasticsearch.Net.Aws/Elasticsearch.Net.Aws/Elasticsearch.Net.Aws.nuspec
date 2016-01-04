@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/bcuff/elasticsearch-net-aws</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial release.</releaseNotes>
+    <releaseNotes>Fixed bug that manifested while pinging in the background.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch elastic search aws amazon</tags>
   </metadata>
