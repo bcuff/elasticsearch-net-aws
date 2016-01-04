@@ -2,8 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Elasticsearch.Net.Aws
@@ -75,67 +73,6 @@ namespace Elasticsearch.Net.Aws
                 reader.Read();
             }
             output.Append(lastWhitespace);
-        }
-
-        private static string GetCanonicalRequest(HttpWebRequest request, byte[] data)
-        {
-            var result = new StringBuilder();
-            result.Append(request.Method);
-            result.Append('\n');
-            result.Append(request.RequestUri.AbsolutePath.Replace(":", Uri.HexEscape(':')));
-            result.Append('\n');
-            result.Append(request.RequestUri.Query);
-            result.Append('\n');
-            WriteCanonicalHeaders(request, result);
-            result.Append('\n');
-            WriteSignedHeaders(request, result);
-            result.Append('\n');
-            WriteRequestPayloadHash(data, result);
-            return result.ToString();
-        }
-
-        private static void WriteCanonicalHeaders(HttpWebRequest request, StringBuilder output)
-        {
-            var q = from string key in request.Headers
-                    let headerName = key.ToLowerInvariant()
-                    let headerValues = string.Join(",",
-                        request.Headers
-                        .GetValues(key) ?? Enumerable.Empty<string>()
-                        .Select(v => v.Trimall())
-                    )
-                    orderby headerName ascending
-                    select string.Format("{0}:{1}\n", headerName, headerValues);
-            foreach (var line in q)
-            {
-                output.Append(line);
-            }
-        }
-
-        private static void WriteSignedHeaders(HttpWebRequest request, StringBuilder output)
-        {
-            bool started = false;
-            foreach (string headerName in request.Headers)
-            {
-                if (started) output.Append(';');
-                output.Append(headerName.ToLowerInvariant());
-                started = true;
-            }
-        }
-
-        static readonly byte[] _emptyBytes = new byte[0];
-
-        private static void WriteRequestPayloadHash(byte[] data, StringBuilder output)
-        {
-            data = data ?? _emptyBytes;
-            byte[] hash;
-            using (var algo = HashAlgorithm.Create("SHA256"))
-            {
-                hash = algo.ComputeHash(data);
-            }
-            foreach (var b in hash)
-            {
-                output.AppendFormat("{0:x2}", b);
-            }
         }
     }
 }
