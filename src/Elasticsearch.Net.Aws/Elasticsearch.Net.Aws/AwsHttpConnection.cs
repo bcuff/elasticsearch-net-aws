@@ -10,10 +10,11 @@ namespace Elasticsearch.Net.Aws
     /// </summary>
     public class AwsHttpConnection : HttpConnection
     {
-        readonly string _accessKey;
-        readonly string _secretKey;
-        readonly string _token;
-        readonly string _region;
+        private string _accessKey;
+        private string _secretKey;
+        private string _token;
+        private string _region;
+        private AuthType _authType;
 
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with the specified AccessKey, SecretKey and Token.
@@ -30,28 +31,42 @@ namespace Elasticsearch.Net.Aws
             _secretKey = awsSettings.SecretKey;
             _token = awsSettings.Token;
             _region = awsSettings.Region.ToLowerInvariant();
+            _authType = AuthType.AccessKey;
         }
 
         /// <summary>
-        /// Initializes a new instance of the AwsHttpConnection class with info from the Instance Profile service
+        /// Initializes a new instance of the AwsHttpConnection class with credentials from the Instance Profile service
         /// </summary>
         /// <param name="settings">The NEST/Elasticsearch.Net settings.</param>
+        /// <param name="region">AWS region</param>
         public AwsHttpConnection(IConnectionConfigurationValues settings, string region) : base(settings)
         {
-            var credentials = InstanceProfileService.GetCredentials();
-            if (credentials == null) throw new Exception("Unable to retrieve session credentials from instance profile service");
-
-            _accessKey = credentials.AccessKeyId;
-            _secretKey = credentials.SecretAccessKey;
-            _token = credentials.Token;
+            if (string.IsNullOrWhiteSpace(region)) throw new ArgumentException("region is invalid.", "region");
             _region = region.ToLowerInvariant();
+            _authType = AuthType.InstanceProfile;
         }
 
         protected override HttpWebRequest CreateHttpWebRequest(Uri uri, string method, byte[] data, IRequestConfiguration requestSpecificConfig)
         {
+            if (_authType == AuthType.InstanceProfile)
+            {
+                RefreshCredentials();
+            }
+
             var request = base.CreateHttpWebRequest(uri, method, data, requestSpecificConfig);
             SignV4Util.SignRequest(request, data, _accessKey, _secretKey, _token, _region, "es");
             return request;
+        }
+
+        private void RefreshCredentials()
+        {
+            var credentials = InstanceProfileService.GetCredentials();
+            if (credentials == null)
+                throw new Exception("Unable to retrieve session credentials from instance profile service");
+
+            _accessKey = credentials.AccessKeyId;
+            _secretKey = credentials.SecretAccessKey;
+            _token = credentials.Token;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Web.Script.Serialization;
 
 namespace Elasticsearch.Net.Aws
 {
-    public static class InstanceProfileService
+    internal static class InstanceProfileService
     {
         private static readonly string[] AliasSeparators = { "<br/>" };
         private const string Server = "http://169.254.169.254";
@@ -16,7 +16,7 @@ namespace Elasticsearch.Net.Aws
         private static InstanceProfileCredentials _cachedCredentials;
         private static readonly object CacheLock = new object();
 
-        public static InstanceProfileCredentials GetCredentials()
+        internal static InstanceProfileCredentials GetCredentials()
         {
             var cachedCredentials = GetCachedCredentials();
             if (cachedCredentials != null)
@@ -33,12 +33,12 @@ namespace Elasticsearch.Net.Aws
                     if (credentials.Code != SuccessCode)
                         return null;
 
-                    _cachedCredentials = cachedCredentials = credentials;
+                    _cachedCredentials = credentials;
 
                 }
             }
 
-            return cachedCredentials;
+            return GetCachedCredentials();
         }
 
         private static InstanceProfileCredentials GetCachedCredentials()
@@ -85,8 +85,7 @@ namespace Elasticsearch.Net.Aws
             try
             {
                 var request = WebRequest.Create(uri) as HttpWebRequest;
-                var asyncResult = request.BeginGetResponse(null, null);
-                using (var response = request.EndGetResponse(asyncResult) as HttpWebResponse)
+                using (var response = request.GetResponse() as HttpWebResponse)
                 using (var reader = new StreamReader(response.GetResponseStream()))
                 {
                     return reader.ReadToEnd();
