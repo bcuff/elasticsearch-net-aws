@@ -45,7 +45,7 @@ namespace Elasticsearch.Net.Aws
         {
             if (_cachedCredentials != null)
             {
-                if (_cachedCredentials.Expiration > DateTime.Now.ToUniversalTime().AddMinutes(15))
+                if (_cachedCredentials.Expiration > DateTime.UtcNow.AddMinutes(15))
                 {
                     return _cachedCredentials;
                 }
@@ -91,9 +91,9 @@ namespace Elasticsearch.Net.Aws
                     return reader.ReadToEnd();
                 }
             }
-            catch (WebException)
+            catch (WebException ex)
             {
-                throw new Exception("Unable to reach credentials server");
+                throw new Exception("Unable to reach credentials server", ex);
             }
         }
 

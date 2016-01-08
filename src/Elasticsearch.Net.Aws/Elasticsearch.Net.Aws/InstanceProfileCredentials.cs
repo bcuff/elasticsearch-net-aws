@@ -2,7 +2,7 @@
 
 namespace Elasticsearch.Net.Aws
 {
-    public class InstanceProfileCredentials
+    internal class InstanceProfileCredentials
     {
         public string Code { get; set; }
         public DateTime LastUpdated { get; set; }
