@@ -14,12 +14,13 @@ namespace Elasticsearch.Net.Aws
     {
         static readonly char[] _datePartSplitChars = { 'T' };
 
-        public static void SignRequest(HttpWebRequest request, byte[] body, string accessKey, string secretKey, string region, string service)
+        public static void SignRequest(HttpWebRequest request, byte[] body, string accessKey, string secretKey, string token, string region, string service)
         {
             var date = DateTime.UtcNow;
             var dateStamp = date.ToString("yyyyMMdd");
             var amzDate = date.ToString("yyyyMMddTHHmmssZ");
             request.Headers["X-Amz-Date"] = amzDate;
+
             var signingKey = GetSigningKey(secretKey, dateStamp, region, service);
             var stringToSign = GetStringToSign(request, body, region, service);
             Debug.Write("========== String to Sign ==========\r\n{0}\r\n========== String to Sign ==========\r\n", stringToSign);
@@ -30,7 +31,10 @@ namespace Elasticsearch.Net.Aws
                 GetCredentialScope(dateStamp, region, service),
                 GetSignedHeaders(request),
                 signature);
+
             request.Headers[HttpRequestHeader.Authorization] = auth;
+            if (!String.IsNullOrWhiteSpace(token))
+                request.Headers["x-amz-security-token"] = token;
         }
 
         public static byte[] GetSigningKey(string secretKey, string dateStamp, string region, string service)
@@ -96,7 +100,7 @@ namespace Elasticsearch.Net.Aws
             return path.Replace(":", Uri.HexEscape(':'));
         }
 
-        private static Dictionary<string,string> GetCanonicalHeaders(this HttpWebRequest request)
+        private static Dictionary<string, string> GetCanonicalHeaders(this HttpWebRequest request)
         {
             var q = from string key in request.Headers
                     let headerName = key.ToLowerInvariant()

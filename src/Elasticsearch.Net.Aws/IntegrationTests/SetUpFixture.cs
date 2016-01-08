@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Web.Helpers;
+using System.Web.Script.Serialization;
 using Elasticsearch.Net.Aws;
 using NUnit.Framework;
 
@@ -15,13 +13,15 @@ namespace IntegrationTests
         public void SetUp()
         {
             var json = File.ReadAllText("TargetConfig.json").Trim();
-            dynamic config = Json.Decode(json);
-            TestConfig.Endpoint = config.endpoint;
+            var serializer = new JavaScriptSerializer();
+            var config =serializer.Deserialize<Dictionary<string, string>>(json);
+
+            TestConfig.Endpoint = config["endpoint"];
             TestConfig.AwsSettings = new AwsSettings
             {
-                AccessKey = config.accessKey,
-                SecretKey = config.secretKey,
-                Region = config.region,
+                AccessKey = config["accessKey"],
+                SecretKey = config["secretKey"],
+                Region = config["region"],
             };
         }
     }

@@ -73,15 +73,19 @@ namespace Tests
         public void SignRequest_should_apply_signature_to_request()
         {
             var secretKey = "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY";
-            SignV4Util.SignRequest(_sampleRequest, _sampleBody, "ExampleKey", secretKey, "us-east-1", "iam");
-            var amzDate = _sampleRequest.Headers["X-Amz-Date"];
+            SignV4Util.SignRequest(_sampleRequest, _sampleBody, "ExampleKey", secretKey, "token1", "us-east-1", "iam");
 
+            var amzDate = _sampleRequest.Headers["X-Amz-Date"];
             Assert.IsNotNullOrEmpty(amzDate);
             Trace.WriteLine("X-Amz-Date: " + amzDate);
 
             var auth = _sampleRequest.Headers[HttpRequestHeader.Authorization];
             Assert.IsNotNullOrEmpty(auth);
             Trace.WriteLine("Authorize: " + auth);
+
+            var token = _sampleRequest.Headers["x-amz-security-token"];
+            Assert.IsNotNullOrEmpty(token);
+            Trace.WriteLine("Token: " + token);
         }
 
         [Test]
