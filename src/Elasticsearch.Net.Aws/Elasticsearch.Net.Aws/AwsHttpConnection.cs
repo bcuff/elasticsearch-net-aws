@@ -1,7 +1,6 @@
 ﻿using System;
+using System.IO;
 using System.Net;
-using Elasticsearch.Net.Connection;
-using Elasticsearch.Net.Connection.Configuration;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -19,9 +18,8 @@ namespace Elasticsearch.Net.Aws
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with the specified AccessKey, SecretKey and Token.
         /// </summary>
-        /// <param name="settings">The NEST/Elasticsearch.Net settings.</param>
         /// <param name="awsSettings">AWS specific settings required for signing requests.</param>
-        public AwsHttpConnection(IConnectionConfigurationValues settings, AwsSettings awsSettings) : base(settings)
+        public AwsHttpConnection(AwsSettings awsSettings)
         {
             if (awsSettings == null) throw new ArgumentNullException("awsSettings");
             if (string.IsNullOrWhiteSpace(awsSettings.AccessKey)) throw new ArgumentException("awsSettings.AccessKey is invalid.", "awsSettings");
@@ -39,21 +37,33 @@ namespace Elasticsearch.Net.Aws
         /// </summary>
         /// <param name="settings">The NEST/Elasticsearch.Net settings.</param>
         /// <param name="region">AWS region</param>
-        public AwsHttpConnection(IConnectionConfigurationValues settings, string region) : base(settings)
+        public AwsHttpConnection(string region)
         {
             if (string.IsNullOrWhiteSpace(region)) throw new ArgumentException("region is invalid.", "region");
             _region = region.ToLowerInvariant();
             _authType = AuthType.InstanceProfile;
         }
 
-        protected override HttpWebRequest CreateHttpWebRequest(Uri uri, string method, byte[] data, IRequestConfiguration requestSpecificConfig)
+        protected override HttpWebRequest CreateHttpWebRequest(RequestData requestData)
         {
             if (_authType == AuthType.InstanceProfile)
             {
                 RefreshCredentials();
             }
-
-            var request = base.CreateHttpWebRequest(uri, method, data, requestSpecificConfig);
+            var request = base.CreateHttpWebRequest(requestData);
+            byte[] data = null;
+            if (requestData.PostData != null)
+            {
+                data = requestData.PostData.WrittenBytes;
+                if (data == null)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        requestData.PostData.Write(ms, requestData.ConnectionSettings);
+                        data = ms.ToArray();
+                    }
+                }
+            }
             SignV4Util.SignRequest(request, data, _accessKey, _secretKey, _token, _region, "es");
             return request;
         }

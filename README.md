@@ -3,11 +3,43 @@
 Add-on to [elasticsearch-net / NEST](https://github.com/elastic/elasticsearch-net) for using AWS's elasticsearch service.
 
 ## Install Package
-```
+```PowerShell
+# For ElasticSearch.Net >= 2.0.2
 Install-Package Elasticsearch.Net.Aws
+
+# For ElasticSearch.Net = 1.7.1
+Install-Package Elasticsearch.Net.Aws -Version 1.2.1
 ```
 
 ## Setup
+
+#### Elasticsearch.Net Version >= 2.0.2
+
+**Use Package Version 2.0.0**
+
+```csharp
+// for NEST
+
+// if using an access key
+var httpConnection = new AwsHttpConnection(new AwsSettings
+{
+	AccessKey = "My AWS access key",
+	SecretKey = "My AWS secret key",
+	Region = "us-east-1",
+});
+
+// if using roles
+var httpConnection = new AwsHttpConnection("us-east-1");
+
+var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
+var config = new ConnectionSettings(pool, httpConnection);
+var client = new ElasticClient(config);
+```
+
+#### Elasticsearch.Net Version 1.7.1
+
+**Use Package Version 1.2.1**
+
 ```csharp
 // for NEST
 var client = new ElasticClient(settings, connection: new AwsHttpConnection(settings, new AwsSettings
