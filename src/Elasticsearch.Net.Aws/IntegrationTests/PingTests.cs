@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Elasticsearch.Net;
 using Elasticsearch.Net.Aws;
-using Elasticsearch.Net.Connection;
 using NUnit.Framework;
 
 namespace IntegrationTests
@@ -14,9 +13,11 @@ namespace IntegrationTests
         [Test]
         public void Ping_should_work()
         {
-            var settings = new ConnectionConfiguration(new Uri(TestConfig.Endpoint));
-            var client = new ElasticsearchClient(settings, new AwsHttpConnection(settings, TestConfig.AwsSettings));
-            var response = client.Ping();
+            var httpConnection = new AwsHttpConnection(TestConfig.AwsSettings);
+            var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
+            var config = new ConnectionConfiguration(pool, httpConnection);
+            var client = new ElasticLowLevelClient(config);
+            var response = client.Ping<object>();
             Assert.AreEqual(200, response.HttpStatusCode.GetValueOrDefault(-1));
         }
     }
