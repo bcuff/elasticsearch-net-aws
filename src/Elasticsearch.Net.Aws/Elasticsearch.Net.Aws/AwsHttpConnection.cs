@@ -28,9 +28,7 @@ namespace Elasticsearch.Net.Aws
             return Environment.GetEnvironmentVariable("AWS_SECRET_KEY");
         }
 
-        private string _accessKey;
-        private string _secretKey;
-        private string _token;
+        private Credentials _credentials;
         private readonly string _region;
         private readonly AuthType _authType;
 
@@ -47,8 +45,11 @@ namespace Elasticsearch.Net.Aws
             var secret = GetSecretKey(awsSettings);
             if (!string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(secret))
             {
-                _accessKey = key;
-                _secretKey = secret;
+                _credentials = new Credentials
+                {
+                    AccessKey = key,
+                    SecretKey = secret,
+                };
                 _authType = AuthType.AccessKey;
             }
             else
@@ -86,7 +87,7 @@ namespace Elasticsearch.Net.Aws
                     }
                 }
             }
-            SignV4Util.SignRequest(request, data, _accessKey, _secretKey, _token, _region, "es");
+            SignV4Util.SignRequest(request, data, _credentials, _region, "es");
             return request;
         }
 
@@ -96,9 +97,12 @@ namespace Elasticsearch.Net.Aws
             if (credentials == null)
                 throw new Exception("Unable to retrieve session credentials from instance profile service");
 
-            _accessKey = credentials.AccessKeyId;
-            _secretKey = credentials.SecretAccessKey;
-            _token = credentials.Token;
+            _credentials = new Credentials
+            {
+                AccessKey = credentials.AccessKeyId,
+                SecretKey = credentials.SecretAccessKey,
+                Token = credentials.Token,
+            };
         }
     }
 }
