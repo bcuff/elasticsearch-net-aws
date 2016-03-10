@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/bcuff/elasticsearch-net-aws</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Support Elasticsearch.Net 2.0</releaseNotes>
+    <releaseNotes>Made credential loading more like Amazon's other clients</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch elastic search aws amazon</tags>
   </metadata>
