@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Net;
 
@@ -9,11 +10,29 @@ namespace Elasticsearch.Net.Aws
     /// </summary>
     public class AwsHttpConnection : HttpConnection
     {
+        private static string GetAccessKey(AwsSettings awsSettings)
+        {
+            var key = awsSettings.AccessKey;
+            if (!string.IsNullOrWhiteSpace(key)) return key;
+            key = ConfigurationManager.AppSettings["AWSAccessKey"];
+            if (!string.IsNullOrWhiteSpace(key)) return key;
+            return Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
+        }
+
+        private static string GetSecretKey(AwsSettings awsSettings)
+        {
+            var key = awsSettings.SecretKey;
+            if (!string.IsNullOrWhiteSpace(key)) return key;
+            key = ConfigurationManager.AppSettings["AWSSecretKey"];
+            if (!string.IsNullOrWhiteSpace(key)) return key;
+            return Environment.GetEnvironmentVariable("AWS_SECRET_KEY");
+        }
+
         private string _accessKey;
         private string _secretKey;
         private string _token;
-        private string _region;
-        private AuthType _authType;
+        private readonly string _region;
+        private readonly AuthType _authType;
 
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with the specified AccessKey, SecretKey and Token.
@@ -22,26 +41,29 @@ namespace Elasticsearch.Net.Aws
         public AwsHttpConnection(AwsSettings awsSettings)
         {
             if (awsSettings == null) throw new ArgumentNullException("awsSettings");
-            if (string.IsNullOrWhiteSpace(awsSettings.AccessKey)) throw new ArgumentException("awsSettings.AccessKey is invalid.", "awsSettings");
-            if (string.IsNullOrWhiteSpace(awsSettings.SecretKey)) throw new ArgumentException("awsSettings.SecretKey is invalid.", "awsSettings");
             if (string.IsNullOrWhiteSpace(awsSettings.Region)) throw new ArgumentException("awsSettings.Region is invalid.", "awsSettings");
-            _accessKey = awsSettings.AccessKey;
-            _secretKey = awsSettings.SecretKey;
-            _token = awsSettings.Token;
             _region = awsSettings.Region.ToLowerInvariant();
-            _authType = AuthType.AccessKey;
+            var key = GetAccessKey(awsSettings);
+            var secret = GetSecretKey(awsSettings);
+            if (!string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(secret))
+            {
+                _accessKey = key;
+                _secretKey = secret;
+                _authType = AuthType.AccessKey;
+            }
+            else
+            {
+                _authType = AuthType.InstanceProfile;
+            }
         }
 
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with credentials from the Instance Profile service
         /// </summary>
-        /// <param name="settings">The NEST/Elasticsearch.Net settings.</param>
         /// <param name="region">AWS region</param>
         public AwsHttpConnection(string region)
+            : this(new AwsSettings { Region = region })
         {
-            if (string.IsNullOrWhiteSpace(region)) throw new ArgumentException("region is invalid.", "region");
-            _region = region.ToLowerInvariant();
-            _authType = AuthType.InstanceProfile;
         }
 
         protected override HttpWebRequest CreateHttpWebRequest(RequestData requestData)
