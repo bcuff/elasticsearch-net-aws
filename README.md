@@ -15,7 +15,7 @@ Install-Package Elasticsearch.Net.Aws -Version 1.2.1
 
 #### Elasticsearch.Net Version >= 2.0.2
 
-**Use Package Version 2.0.0**
+**Use Package Version >= 2**
 
 ```csharp
 // for NEST
