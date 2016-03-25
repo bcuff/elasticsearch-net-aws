@@ -97,7 +97,7 @@ namespace Elasticsearch.Net.Aws
         {
             var path = uri.AbsolutePath;
             if (path.Length == 0) return "/";
-            return path.Replace(":", Uri.HexEscape(':'));
+            return string.Join("/", path.Split('/').Select(HttpUtility.UrlEncode));
         }
 
         private static Dictionary<string, string> GetCanonicalHeaders(this HttpWebRequest request)
