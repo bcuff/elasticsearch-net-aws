@@ -7,6 +7,8 @@ using NUnit.Framework;
 
 namespace IntegrationTests
 {
+    using System.IO;
+
     [TestFixture]
     public class PingTests
     {
@@ -31,6 +33,18 @@ namespace IntegrationTests
             var client = new Nest.ElasticClient(config);
             var response = client.Ping();
             Assert.AreEqual(true, response.IsValid);
+        }
+
+        [Test]
+        public void Random_encoded_url_should_work()
+        {
+            var randomString = Guid.NewGuid().ToString("N");
+            var httpConnection = new AwsHttpConnection(TestConfig.AwsSettings);
+            var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
+            var config = new ConnectionConfiguration(pool, httpConnection);
+            var client = new ElasticLowLevelClient(config);
+            var response = client.Get<Stream>(randomString, string.Join(",", Enumerable.Repeat(randomString, 2)), randomString);
+            Assert.AreEqual(404, response.HttpStatusCode.GetValueOrDefault(-1));
         }
     }
 
