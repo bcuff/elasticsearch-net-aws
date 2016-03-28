@@ -4,6 +4,7 @@ using System.Linq;
 using Elasticsearch.Net;
 using Elasticsearch.Net.Aws;
 using Elasticsearch.Net.Connection;
+using Elasticsearch.Net.ConnectionPool;
 using NUnit.Framework;
 
 namespace IntegrationTests
@@ -26,10 +27,9 @@ namespace IntegrationTests
         public void Random_encoded_url_should_work()
         {
             var randomString = Guid.NewGuid().ToString("N");
-            var httpConnection = new AwsHttpConnection(TestConfig.AwsSettings);
-            var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
-            var config = new ConnectionConfiguration(pool, httpConnection);
-            var client = new ElasticLowLevelClient(config);
+            var settings = new ConnectionConfiguration(new Uri(TestConfig.Endpoint));
+            var httpConnection = new AwsHttpConnection(settings, TestConfig.AwsSettings);
+            var client = new ElasticsearchClient(settings, httpConnection);
             var response = client.Get<Stream>(randomString, string.Join(",", Enumerable.Repeat(randomString, 2)), randomString);
             Assert.AreEqual(404, response.HttpStatusCode.GetValueOrDefault(-1));
         }
