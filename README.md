@@ -8,14 +8,14 @@ Add-on to [elasticsearch-net / NEST](https://github.com/elastic/elasticsearch-ne
 Install-Package Elasticsearch.Net.Aws
 
 # For ElasticSearch.Net = 1.7.1
-Install-Package Elasticsearch.Net.Aws -Version 1.2.1
+Install-Package Elasticsearch.Net.Aws-v1
 ```
 
 ## Setup
 
 #### Elasticsearch.Net Version >= 2.0.2
 
-**Use Package Version >= 2**
+**Use Package Elasticsearch.Net.Aws**
 
 ```csharp
 // for NEST
@@ -38,7 +38,8 @@ var client = new ElasticClient(config);
 
 #### Elasticsearch.Net Version 1.7.1
 
-**Use Package Version 1.2.1**
+**Use Package Elasticsearch.Net.Aws-v1**
+**Source for this version is maintained on the version-1 branch**
 
 ```csharp
 // for NEST
