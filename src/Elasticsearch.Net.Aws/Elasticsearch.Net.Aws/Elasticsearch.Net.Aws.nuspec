@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Elasticsearch.Net.Aws</id>
+    <id>Elasticsearch.Net.Aws-v1</id>
     <version>$version$</version>
     <title>$title$</title>
     <authors>$author$</authors>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/bcuff/elasticsearch-net-aws</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Support for instance metadata credentials.</releaseNotes>
+    <releaseNotes>Fixed bug that caused 403 responses for some requests</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch elastic search aws amazon</tags>
   </metadata>

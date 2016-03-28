@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Elasticsearch.Net.Aws")]
-[assembly: AssemblyDescription("Enables request signing necessary for using the AWS Elasticsearch service")]
+[assembly: AssemblyTitle("Elasticsearch.Net.Aws-v1")]
+[assembly: AssemblyDescription("Enables request signing necessary for using the AWS Elasticsearch service.\r\nNOTE - Use this version if you are targeting NEST/Elasticsearch version 1.x")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Brandon Cuff")]
-[assembly: AssemblyProduct("Elasticsearch.Net.Aws")]
+[assembly: AssemblyProduct("Elasticsearch.Net.Aws-v1")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,6 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.1.0")]
-[assembly: AssemblyFileVersion("1.2.1.0")]
+[assembly: AssemblyVersion("1.2.2.0")]
+[assembly: AssemblyFileVersion("1.2.2.0")]
 [assembly: InternalsVisibleTo("Tests")]
