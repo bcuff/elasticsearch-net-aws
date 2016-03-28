@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/bcuff/elasticsearch-net-aws</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Made credential loading more like Amazon's other clients</releaseNotes>
+    <releaseNotes>Fixed a bug that caused 403 responses for some requests.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch elastic search aws amazon</tags>
   </metadata>
