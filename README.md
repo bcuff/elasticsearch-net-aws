@@ -39,7 +39,8 @@ var client = new ElasticClient(config);
 #### Elasticsearch.Net Version 1.7.1
 
 **Use Package Elasticsearch.Net.Aws-v1**
-**Source for this version is maintained on the version-1 branch**
+
+Source for this version is maintained on the version-1 branch
 
 ```csharp
 // for NEST
