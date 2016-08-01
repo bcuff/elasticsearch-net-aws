@@ -25,7 +25,7 @@ namespace Elasticsearch.Net.Aws
             if (!string.IsNullOrWhiteSpace(key)) return key;
             key = ConfigurationManager.AppSettings["AWSSecretKey"];
             if (!string.IsNullOrWhiteSpace(key)) return key;
-            return Environment.GetEnvironmentVariable("AWS_SECRET_KEY");
+            return Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
         }
 
         private Credentials _credentials;
