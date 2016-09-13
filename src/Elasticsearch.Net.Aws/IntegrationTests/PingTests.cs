@@ -46,6 +46,17 @@ namespace IntegrationTests
             var response = client.Get<Stream>(randomString, string.Join(",", Enumerable.Repeat(randomString, 2)), randomString);
             Assert.AreEqual(404, response.HttpStatusCode.GetValueOrDefault(-1));
         }
+
+        [Test]
+        public void Asterisk_encoded_url_should_work()
+        {
+            var httpConnection = new AwsHttpConnection(TestConfig.AwsSettings);
+            var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
+            var config = new ConnectionConfiguration(pool, httpConnection);
+            var client = new ElasticLowLevelClient(config);
+            var response = client.Get<Stream>("index*", "type", "id");
+            Assert.AreEqual(404, response.HttpStatusCode.GetValueOrDefault(-1));
+        }
     }
 
 }
