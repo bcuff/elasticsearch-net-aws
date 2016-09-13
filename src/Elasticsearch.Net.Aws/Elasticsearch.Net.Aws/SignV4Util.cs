@@ -96,8 +96,18 @@ namespace Elasticsearch.Net.Aws
         private static string GetPath(Uri uri)
         {
             var path = uri.AbsolutePath;
-            if (path.Length == 0) return "/";
-            return string.Join("/", path.Split('/').Select(HttpUtility.UrlEncode));
+            if(path.Length == 0) return "/";
+
+            IEnumerable<string> segments = path
+                .Split('/')
+                .Select(segment =>
+                    {
+                        string escaped = HttpUtility.UrlEncode(segment);
+                        escaped = escaped.Replace("*", "%2A");
+                        return escaped;
+                    }
+                );
+            return string.Join("/", segments);
         }
 
         private static Dictionary<string, string> GetCanonicalHeaders(this HttpWebRequest request)
