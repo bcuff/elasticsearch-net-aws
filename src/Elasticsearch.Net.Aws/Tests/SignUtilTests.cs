@@ -28,7 +28,7 @@ namespace Tests
         [Test]
         public void GetCanonicalRequest_should_match_sample()
         {
-            var canonicalRequest = SignV4Util.GetCanonicalRequest(_sampleRequest, _sampleBody);
+            var canonicalRequest = SignV4Util.GetCanonicalRequest(new SignableHttpWebRequest(_sampleRequest, _sampleBody));
             Trace.WriteLine("=== Actual ===");
             Trace.Write(canonicalRequest);
 
@@ -42,7 +42,7 @@ namespace Tests
         [Test]
         public void GetStringToSign_should_match_sample()
         {
-            var stringToSign = SignV4Util.GetStringToSign(_sampleRequest, _sampleBody, "us-east-1", "iam");
+            var stringToSign = SignV4Util.GetStringToSign(new SignableHttpWebRequest(_sampleRequest, _sampleBody), "us-east-1", "iam");
             Trace.WriteLine("=== Actual ===");
             Trace.Write(stringToSign);
 
@@ -78,7 +78,7 @@ namespace Tests
                 SecretKey =  "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY",
                 Token = "token1",
             };
-            SignV4Util.SignRequest(_sampleRequest, _sampleBody, creds, "us-east-1", "iam");
+            SignV4Util.SignRequest(new SignableHttpWebRequest(_sampleRequest, _sampleBody), creds, "us-east-1", "iam");
 
             var amzDate = _sampleRequest.Headers["X-Amz-Date"];
             Assert.IsNotNullOrEmpty(amzDate);

@@ -14,15 +14,15 @@ namespace Elasticsearch.Net.Aws
     {
         static readonly char[] _datePartSplitChars = { 'T' };
 
-        public static void SignRequest(HttpWebRequest request, byte[] body, Credentials credentials, string region, string service)
+        public static void SignRequest(IHttpRequest request, Credentials credentials, string region, string service)
         {
             var date = DateTime.UtcNow;
             var dateStamp = date.ToString("yyyyMMdd");
             var amzDate = date.ToString("yyyyMMddTHHmmssZ");
-            request.Headers["X-Amz-Date"] = amzDate;
+            request.SetHeader("X-Amz-Date", amzDate);
 
             var signingKey = GetSigningKey(credentials.SecretKey, dateStamp, region, service);
-            var stringToSign = GetStringToSign(request, body, region, service);
+            var stringToSign = GetStringToSign(request, region, service);
             Debug.Write("========== String to Sign ==========\r\n{0}\r\n========== String to Sign ==========\r\n", stringToSign);
             var signature = signingKey.GetHmacSha256Hash(stringToSign).ToLowercaseHex();
             var auth = string.Format(
@@ -32,9 +32,11 @@ namespace Elasticsearch.Net.Aws
                 GetSignedHeaders(request),
                 signature);
 
-            request.Headers[HttpRequestHeader.Authorization] = auth;
-            if (!String.IsNullOrWhiteSpace(credentials.Token))
-                request.Headers["x-amz-security-token"] = credentials.Token;
+            request.SetHeader("Authorization", auth);
+            if (!string.IsNullOrWhiteSpace(credentials.Token))
+            {
+                request.SetHeader("x-amz-security-token", credentials.Token);
+            }
         }
 
         public static byte[] GetSigningKey(string secretKey, string dateStamp, string region, string service)
@@ -55,11 +57,11 @@ namespace Elasticsearch.Net.Aws
             }
         }
 
-        public static string GetStringToSign(HttpWebRequest request, byte[] data, string region, string service)
+        public static string GetStringToSign(IHttpRequest request, string region, string service)
         {
-            var canonicalRequest = GetCanonicalRequest(request, data);
+            var canonicalRequest = GetCanonicalRequest(request);
             Debug.Write("========== Canonical Request ==========\r\n{0}\r\n========== Canonical Request ==========\r\n", canonicalRequest);
-            var awsDate = request.Headers["x-amz-date"];
+            var awsDate = request.GetHeaderValue("x-amz-date");
             Debug.Assert(Regex.IsMatch(awsDate, @"\d{8}T\d{6}Z"));
             var datePart = awsDate.Split(_datePartSplitChars, 2)[0];
             return string.Join("\n",
@@ -75,21 +77,21 @@ namespace Elasticsearch.Net.Aws
             return string.Format("{0}/{1}/{2}/aws4_request", date, region, service);
         }
 
-        public static string GetCanonicalRequest(HttpWebRequest request, byte[] data)
+        public static string GetCanonicalRequest(IHttpRequest request)
         {
             var canonicalHeaders = request.GetCanonicalHeaders();
             var result = new StringBuilder();
             result.Append(request.Method);
             result.Append('\n');
-            result.Append(GetPath(request.RequestUri));
+            result.Append(GetPath(request.Uri));
             result.Append('\n');
-            result.Append(request.RequestUri.GetCanonicalQueryString());
+            result.Append(request.Uri.GetCanonicalQueryString());
             result.Append('\n');
             WriteCanonicalHeaders(canonicalHeaders, result);
             result.Append('\n');
             WriteSignedHeaders(canonicalHeaders, result);
             result.Append('\n');
-            WriteRequestPayloadHash(data, result);
+            WriteRequestPayloadHash(request.Body, result);
             return result.ToString();
         }
 
@@ -110,18 +112,17 @@ namespace Elasticsearch.Net.Aws
             return string.Join("/", segments);
         }
 
-        private static Dictionary<string, string> GetCanonicalHeaders(this HttpWebRequest request)
+        private static Dictionary<string, string> GetCanonicalHeaders(this IHttpRequest request)
         {
-            var q = from string key in request.Headers
+            var q = from string key in request.GetHeaderKeys()
                     let headerName = key.ToLowerInvariant()
                     let headerValues = string.Join(",",
-                        request.Headers
-                        .GetValues(key) ?? Enumerable.Empty<string>()
+                        request.GetHeaderValues(key) ?? Enumerable.Empty<string>()
                         .Select(v => v.Trimall())
                     )
                     select new { headerName, headerValues };
             var result = q.ToDictionary(v => v.headerName, v => v.headerValues);
-            result["host"] = request.RequestUri.Host.ToLowerInvariant();
+            result["host"] = request.Uri.Host.ToLowerInvariant();
             return result;
         }
 
@@ -129,14 +130,14 @@ namespace Elasticsearch.Net.Aws
         {
             var q = from pair in canonicalHeaders
                     orderby pair.Key ascending
-                    select string.Format("{0}:{1}\n", pair.Key, pair.Value);
+                    select $"{pair.Key}:{pair.Value}\n";
             foreach (var line in q)
             {
                 output.Append(line);
             }
         }
 
-        private static string GetSignedHeaders(HttpWebRequest request)
+        private static string GetSignedHeaders(IHttpRequest request)
         {
             var canonicalHeaders = request.GetCanonicalHeaders();
             var result = new StringBuilder();

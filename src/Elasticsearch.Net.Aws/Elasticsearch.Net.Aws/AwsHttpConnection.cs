@@ -90,7 +90,8 @@ namespace Elasticsearch.Net.Aws
                     }
                 }
             }
-            SignV4Util.SignRequest(request, data, _credentials, _region, "es");
+            var signableRequest = new SignableHttpWebRequest(request, data);
+            SignV4Util.SignRequest(signableRequest, _credentials, _region, "es");
             return request;
         }
 
