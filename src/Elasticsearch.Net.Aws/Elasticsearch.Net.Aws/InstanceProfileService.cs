@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+
+#if DOTNETCORE
+using System.Net.Http;
+#endif
 
 namespace Elasticsearch.Net.Aws
 {
@@ -12,7 +16,6 @@ namespace Elasticsearch.Net.Aws
         private const string Server = "http://169.254.169.254";
         private const string RolesPath = "/latest/meta-data/iam/security-credentials/";
         private const string SuccessCode = "Success";
-        private static readonly JavaScriptSerializer CredentialSerializer = new JavaScriptSerializer();
         private static InstanceProfileCredentials _cachedCredentials;
         private static readonly object CacheLock = new object();
 
@@ -28,7 +31,7 @@ namespace Elasticsearch.Net.Aws
                 {
                     var role = GetFirstRole();
                     var json = GetContents(new Uri(Server + RolesPath + role));
-                    var credentials = CredentialSerializer.Deserialize<InstanceProfileCredentials>(json);
+                    var credentials = JsonConvert.DeserializeObject<InstanceProfileCredentials>(json);
 
                     if (credentials.Code != SuccessCode)
                         return null;
@@ -84,16 +87,24 @@ namespace Elasticsearch.Net.Aws
         {
             try
             {
-                var request = WebRequest.Create(uri) as HttpWebRequest;
-                using (var response = request.GetResponse() as HttpWebResponse)
-                using (var reader = new StreamReader(response.GetResponseStream()))
+#if DOTNETCORE
+                using (var client = new HttpClient())
+                using (var response = client.GetAsync(uri).Result)
+                {
+                    return response.Content.ReadAsStringAsync().Result;
+               }
+#else
+                using (var response = WebRequest.CreateHttp(uri).GetResponse())
+                using (var body = response.GetResponseStream())
+                using (var reader = new StreamReader(body))
                 {
                     return reader.ReadToEnd();
                 }
+#endif
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
-                throw new Exception("Unable to reach credentials server", ex);
+                throw new Exception("Unable to get instance profile credentials", ex);
             }
         }
 

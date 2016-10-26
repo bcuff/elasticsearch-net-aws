@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !DOTNETCORE
+using System;
 using System.Configuration;
 using System.IO;
 using System.Net;
@@ -14,8 +15,10 @@ namespace Elasticsearch.Net.Aws
         {
             var key = awsSettings.AccessKey;
             if (!string.IsNullOrWhiteSpace(key)) return key;
+#if NET45
             key = ConfigurationManager.AppSettings["AWSAccessKey"];
             if (!string.IsNullOrWhiteSpace(key)) return key;
+#endif
             return Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
         }
 
@@ -106,3 +109,4 @@ namespace Elasticsearch.Net.Aws
         }
     }
 }
+#endif
