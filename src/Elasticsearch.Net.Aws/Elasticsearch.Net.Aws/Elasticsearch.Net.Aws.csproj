@@ -63,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignableHttpWebRequest.cs" />
     <Compile Include="SignV4Util.cs" />
+    <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="StringUtil.cs" />
   </ItemGroup>
   <ItemGroup>

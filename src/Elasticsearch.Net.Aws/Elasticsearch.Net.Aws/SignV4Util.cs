@@ -104,7 +104,7 @@ namespace Elasticsearch.Net.Aws
                 .Split('/')
                 .Select(segment =>
                     {
-                        string escaped = HttpUtility.UrlEncode(segment);
+                        string escaped = WebUtility.UrlEncode(segment);
                         escaped = escaped.Replace("*", "%2A");
                         return escaped;
                     }
@@ -182,7 +182,7 @@ namespace Elasticsearch.Net.Aws
             {
                 if (value[i].RequiresEncoding())
                 {
-                    output.Append(Uri.HexEscape(value[i]));
+                    output.AppendHexEscaped(value[i]);
                 }
                 else
                 {
