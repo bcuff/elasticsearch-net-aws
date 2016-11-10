@@ -6,7 +6,11 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+#if DOTNETCORE
+using Microsoft.AspNetCore.WebUtilities;
+#else
 using System.Web;
+#endif
 
 namespace Elasticsearch.Net.Aws
 {
@@ -50,9 +54,8 @@ namespace Elasticsearch.Net.Aws
 
         private static byte[] GetHmacSha256Hash(this byte[] key, string data)
         {
-            using (var kha = KeyedHashAlgorithm.Create("HmacSHA256"))
+            using (var kha = new HMACSHA256(key))
             {
-                kha.Key = key;
                 return kha.ComputeHash(_encoding.GetBytes(data));
             }
         }
@@ -159,11 +162,18 @@ namespace Elasticsearch.Net.Aws
         public static string GetCanonicalQueryString(this Uri uri)
         {
             if (string.IsNullOrWhiteSpace(uri.Query)) return string.Empty;
+
+#if DOTNETCORE
+            var q = from kvp in QueryHelpers.ParseQuery(uri.Query)
+                    from value in kvp.Value
+                    select new { key = kvp.Key, value };
+#else
             var queryParams = HttpUtility.ParseQueryString(uri.Query);
             var q = from string key in queryParams
                     orderby key
                     from value in queryParams.GetValues(key)
                     select new { key, value };
+#endif
 
             var output = new StringBuilder();
             foreach (var param in q)
@@ -238,7 +248,7 @@ namespace Elasticsearch.Net.Aws
 
         private static byte[] GetHash(this byte[] data)
         {
-            using (var algo = HashAlgorithm.Create("SHA256"))
+            using (var algo = SHA256.Create())
             {
                 return algo.ComputeHash(data);
             }
