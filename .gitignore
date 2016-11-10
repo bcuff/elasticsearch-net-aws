@@ -195,7 +195,7 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
-project.lock.json
+*.lock.json
 
 # VIM files
 .*.swp

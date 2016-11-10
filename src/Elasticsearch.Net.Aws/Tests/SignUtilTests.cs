@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using Elasticsearch.Net.Aws;
 using NUnit.Framework;
@@ -11,24 +10,29 @@ namespace Tests
     [TestFixture]
     public class SignUtilTests
     {
-        HttpWebRequest _sampleRequest;
-        byte[] _sampleBody;
+        MockHttpRequest _sampleRequest;
 
         [SetUp]
         public void SetUp()
         {
-            _sampleRequest = WebRequest.CreateHttp("https://iam.amazonaws.com/");
-            _sampleRequest.Method = "POST";
-            _sampleRequest.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
-            _sampleRequest.Headers["X-Amz-Date"] = "20110909T233600Z";
-            var encoding = new UTF8Encoding(false);
-            _sampleBody = encoding.GetBytes("Action=ListUsers&Version=2010-05-08");
+            _sampleRequest = new MockHttpRequest
+            {
+                Uri = new Uri("https://iam.amazonaws.com/"),
+                Method = "POST",
+                Headers = new NameValueCollection
+                {
+                    ["Content-Type"] =  "application/x-www-form-urlencoded; charset=utf-8",
+                    ["X-Amz-Date"] = "20110909T233600Z",
+
+                },
+                Body = new UTF8Encoding(false).GetBytes("Action=ListUsers&Version=2010-05-08"),
+            };
         }
 
         [Test]
         public void GetCanonicalRequest_should_match_sample()
         {
-            var canonicalRequest = SignV4Util.GetCanonicalRequest(new SignableHttpWebRequest(_sampleRequest, _sampleBody));
+            var canonicalRequest = SignV4Util.GetCanonicalRequest(_sampleRequest);
             Trace.WriteLine("=== Actual ===");
             Trace.Write(canonicalRequest);
 
@@ -42,7 +46,7 @@ namespace Tests
         [Test]
         public void GetStringToSign_should_match_sample()
         {
-            var stringToSign = SignV4Util.GetStringToSign(new SignableHttpWebRequest(_sampleRequest, _sampleBody), "us-east-1", "iam");
+            var stringToSign = SignV4Util.GetStringToSign(_sampleRequest, "us-east-1", "iam");
             Trace.WriteLine("=== Actual ===");
             Trace.Write(stringToSign);
 
@@ -78,18 +82,21 @@ namespace Tests
                 SecretKey =  "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY",
                 Token = "token1",
             };
-            SignV4Util.SignRequest(new SignableHttpWebRequest(_sampleRequest, _sampleBody), creds, "us-east-1", "iam");
+            SignV4Util.SignRequest(_sampleRequest, creds, "us-east-1", "iam");
 
             var amzDate = _sampleRequest.Headers["X-Amz-Date"];
-            Assert.IsNotNullOrEmpty(amzDate);
+            Assert.IsNotNull(amzDate);
+            Assert.IsNotEmpty(amzDate);
             Trace.WriteLine("X-Amz-Date: " + amzDate);
 
-            var auth = _sampleRequest.Headers[HttpRequestHeader.Authorization];
-            Assert.IsNotNullOrEmpty(auth);
+            var auth = _sampleRequest.Headers["Authorization"];
+            Assert.IsNotNull(auth);
+            Assert.IsNotEmpty(auth);
             Trace.WriteLine("Authorize: " + auth);
 
             var token = _sampleRequest.Headers["x-amz-security-token"];
-            Assert.IsNotNullOrEmpty(token);
+            Assert.IsNotNull(token);
+            Assert.IsNotEmpty(token);
             Trace.WriteLine("Token: " + token);
         }
 

@@ -14,13 +14,16 @@ namespace Tests
             var credentials = InstanceProfileService.GetCredentials();
 
             Trace.Write(String.Format("AccessKeyId: {0}", credentials.AccessKeyId));
-            Assert.IsNotNullOrEmpty(credentials.AccessKeyId);
+            Assert.IsNotNull(credentials.AccessKeyId);
+            Assert.IsNotEmpty(credentials.AccessKeyId);
 
             Trace.Write(String.Format("SecretAccessKey: {0}", credentials.SecretAccessKey));
-            Assert.IsNotNullOrEmpty(credentials.SecretAccessKey);
+            Assert.IsNotNull(credentials.SecretAccessKey);
+            Assert.IsNotEmpty(credentials.SecretAccessKey);
 
             Trace.Write(String.Format("Token: {0}", credentials.Token));
-            Assert.IsNotNullOrEmpty(credentials.Token);
+            Assert.IsNotNull(credentials.Token);
+            Assert.IsNotEmpty(credentials.Token);
         }
     }
 }

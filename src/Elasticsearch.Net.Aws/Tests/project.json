@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0-*",
+  "dependencies": {
+    "Elasticsearch.Net": "2.4.6",
+    "Elasticsearch.Net.Aws": "2.1.4.0",
+    "NETStandard.Library": "1.6.0",
+    "NUnit": "3.5.0"
+  },
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50"
+    }
+  },
+  "buildOptions": {
+    "define": [ "DOTNETCORE" ]
+  }
+}
