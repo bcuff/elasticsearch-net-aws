@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Configuration;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -14,8 +13,10 @@ namespace Elasticsearch.Net.Aws
         {
             var key = awsSettings.AccessKey;
             if (!string.IsNullOrWhiteSpace(key)) return key;
-            key = ConfigurationManager.AppSettings["AWSAccessKey"];
+#if NET45
+            key = System.Configuration.ConfigurationManager.AppSettings["AWSAccessKey"];
             if (!string.IsNullOrWhiteSpace(key)) return key;
+#endif
             return Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
         }
 
@@ -23,8 +24,10 @@ namespace Elasticsearch.Net.Aws
         {
             var key = awsSettings.SecretKey;
             if (!string.IsNullOrWhiteSpace(key)) return key;
-            key = ConfigurationManager.AppSettings["AWSSecretKey"];
+#if NET45
+            key = System.Configuration.ConfigurationManager.AppSettings["AWSSecretKey"];
             if (!string.IsNullOrWhiteSpace(key)) return key;
+#endif
             return Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
         }
 
@@ -67,13 +70,32 @@ namespace Elasticsearch.Net.Aws
         {
         }
 
-        protected override HttpWebRequest CreateHttpWebRequest(RequestData requestData)
+#if NETSTANDARD1_6
+        protected override HttpRequestMessage CreateHttpRequestMessage(RequestData requestData)
+        {
+            if (_authType == AuthType.InstanceProfile)
+            {
+                RefreshCredentials();
+            }
+            var request = base.CreateHttpRequestMessage(requestData);
+            SignRequest(new HttpRequestMessageAdapter(request), requestData);
+            return request;
+        }
+#elif NET45
+        protected override System.Net.HttpWebRequest CreateHttpWebRequest(RequestData requestData)
         {
             if (_authType == AuthType.InstanceProfile)
             {
                 RefreshCredentials();
             }
             var request = base.CreateHttpWebRequest(requestData);
+            SignRequest(new HttpWebRequestAdapter(request), requestData);
+            return request;
+        }
+#endif
+
+        private void SignRequest(IRequest request, RequestData requestData)
+        {
             byte[] data = null;
             if (requestData.PostData != null)
             {
@@ -88,7 +110,6 @@ namespace Elasticsearch.Net.Aws
                 }
             }
             SignV4Util.SignRequest(request, data, _credentials, _region, "es");
-            return request;
         }
 
         private void RefreshCredentials()

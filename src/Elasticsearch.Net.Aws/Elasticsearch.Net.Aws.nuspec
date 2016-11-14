@@ -23,8 +23,8 @@
       </group>
     </dependencies>
   </metadata>
-  <!--<files>
+  <files>
     <file src="Elasticsearch.Net.Aws\bin\Release\Elasticsearch.Net.Aws.dll" target="lib\net45\Elasticsearch.Net.Aws.dll" />
     <file src="Elasticsearch.Net.Aws.NetStandard\bin\Release\netstandard1.6\Elasticsearch.Net.Aws.NetStandard.dll" target="lib\netstandard1.6\Elasticsearch.Net.Aws.dll" />
-  </files>-->
+  </files>
 </package>

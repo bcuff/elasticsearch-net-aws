@@ -77,8 +77,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Elasticsearch.Net.Aws\Elasticsearch.Net.Aws.csproj">
-      <Project>{17db4a76-0442-4020-8659-13645aeee722}</Project>
+    <ProjectReference Include="..\Elasticsearch.Net.Aws\Elasticsearch.Net.Aws.xproj">
+      <Project>{0de39cec-a00f-409a-9d45-aafa31c77ed9}</Project>
       <Name>Elasticsearch.Net.Aws</Name>
     </ProjectReference>
   </ItemGroup>
