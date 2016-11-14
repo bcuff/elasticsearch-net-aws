@@ -18,14 +18,11 @@ namespace Elasticsearch.Net.Aws
                 _headers = headers;
             }
 
-            public string this[string name]
-            {
-                get { return _headers[name]; }
-                set { _headers[name] = value; }
-            }
-
+            public string XAmzDate { get { return _headers["x-amz-date"]; } set { _headers["x-amz-date"] = value; } }
+            public string Authorization { get { return _headers[HttpRequestHeader.Authorization]; } set { _headers[HttpRequestHeader.Authorization] = value; } }
+            public string XAmzSecurityToken { get { return _headers["x-amz-security-token"]; } set { _headers["x-amz-security-token"] = value; } }
             public IEnumerable<string> GetValues(string name) => _headers.GetValues(name);
-            public IEnumerator GetEnumerator() => _headers.GetEnumerator();
+            public IEnumerable<string> Keys => _headers.AllKeys;
         }
 
         private readonly HttpWebRequest _request;

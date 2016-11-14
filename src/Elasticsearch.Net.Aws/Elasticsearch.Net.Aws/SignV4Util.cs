@@ -19,7 +19,7 @@ namespace Elasticsearch.Net.Aws
             var date = DateTime.UtcNow;
             var dateStamp = date.ToString("yyyyMMdd");
             var amzDate = date.ToString("yyyyMMddTHHmmssZ");
-            request.Headers["X-Amz-Date"] = amzDate;
+            request.Headers.XAmzDate = amzDate;
 
             var signingKey = GetSigningKey(credentials.SecretKey, dateStamp, region, service);
             var stringToSign = GetStringToSign(request, body, region, service);
@@ -32,9 +32,9 @@ namespace Elasticsearch.Net.Aws
                 GetSignedHeaders(request),
                 signature);
 
-            request.Headers["Authorization"] = auth;
+            request.Headers.Authorization = auth;
             if (!String.IsNullOrWhiteSpace(credentials.Token))
-                request.Headers["x-amz-security-token"] = credentials.Token;
+                request.Headers.XAmzSecurityToken = credentials.Token;
         }
 
         public static byte[] GetSigningKey(string secretKey, string dateStamp, string region, string service)
@@ -59,7 +59,7 @@ namespace Elasticsearch.Net.Aws
         {
             var canonicalRequest = GetCanonicalRequest(request, data);
             Debug.Write("========== Canonical Request ==========\r\n{0}\r\n========== Canonical Request ==========\r\n", canonicalRequest);
-            var awsDate = request.Headers["x-amz-date"];
+            var awsDate = request.Headers.XAmzDate;
             Debug.Assert(Regex.IsMatch(awsDate, @"\d{8}T\d{6}Z"));
             var datePart = awsDate.Split(_datePartSplitChars, 2)[0];
             return string.Join("\n",
@@ -112,7 +112,7 @@ namespace Elasticsearch.Net.Aws
 
         private static Dictionary<string, string> GetCanonicalHeaders(this IRequest request)
         {
-            var q = from string key in request.Headers
+            var q = from string key in request.Headers.Keys
                     let headerName = key.ToLowerInvariant()
                     let headerValues = string.Join(",",
                         request.Headers

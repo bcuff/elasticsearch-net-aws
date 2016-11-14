@@ -3,9 +3,12 @@ using System.Collections.Generic;
 
 namespace Elasticsearch.Net.Aws
 {
-    public interface IHeaders : IEnumerable
+    public interface IHeaders
     {
-        string this[string name] { get; set; }
+        string XAmzDate { get; set; }
+        string Authorization { get; set; }
+        string XAmzSecurityToken { get; set; }
         IEnumerable<string> GetValues(string name);
+        IEnumerable<string> Keys { get; }
     }
 }

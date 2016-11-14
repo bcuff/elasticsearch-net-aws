@@ -41,6 +41,10 @@
       <HintPath>..\packages\Elasticsearch.Net.2.4.1\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Elasticsearch.Net.Aws, Version=2.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Elasticsearch.Net.Aws\bin\Debug\net45\Elasticsearch.Net.Aws.dll</HintPath>
+    </Reference>
     <Reference Include="Nest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
       <HintPath>..\packages\NEST.2.4.1\lib\net45\Nest.dll</HintPath>
       <Private>True</Private>
@@ -69,12 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Elasticsearch.Net.Aws\Elasticsearch.Net.Aws.xproj">
-      <Project>{0de39cec-a00f-409a-9d45-aafa31c77ed9}</Project>
-      <Name>Elasticsearch.Net.Aws</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

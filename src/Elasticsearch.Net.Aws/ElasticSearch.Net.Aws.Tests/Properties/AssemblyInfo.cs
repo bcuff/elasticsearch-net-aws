@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Elasticsearch.Net.Aws.NetCore")]
+[assembly: AssemblyProduct("ElasticSearch.Net.Aws.Tests")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -16,6 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0de39cec-a00f-409a-9d45-aafa31c77ed9")]
-
-[assembly: InternalsVisibleTo("ElasticSearch.Net.Aws.Tests")]
+[assembly: Guid("cffd4a71-f57a-458b-87b8-e6513d6b0c72")]

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{4C55D18B-FD05-424C-8E22-C37F511FD5DA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{F8007B9D-E7A3-458E-AD5E-F770DD1A614F}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Elasticsearch.Net.Aws", "Elasticsearch.Net.Aws\Elasticsearch.Net.Aws.xproj", "{0DE39CEC-A00F-409A-9D45-AAFA31C77ED9}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ElasticSearch.Net.Aws.Tests", "ElasticSearch.Net.Aws.Tests\ElasticSearch.Net.Aws.Tests.xproj", "{CFFD4A71-F57A-458B-87B8-E6513D6B0C72}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4C55D18B-FD05-424C-8E22-C37F511FD5DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C55D18B-FD05-424C-8E22-C37F511FD5DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C55D18B-FD05-424C-8E22-C37F511FD5DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8007B9D-E7A3-458E-AD5E-F770DD1A614F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8007B9D-E7A3-458E-AD5E-F770DD1A614F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8007B9D-E7A3-458E-AD5E-F770DD1A614F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -25,6 +22,10 @@ Global
 		{0DE39CEC-A00F-409A-9D45-AAFA31C77ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DE39CEC-A00F-409A-9D45-AAFA31C77ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DE39CEC-A00F-409A-9D45-AAFA31C77ED9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFFD4A71-F57A-458B-87B8-E6513D6B0C72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFFD4A71-F57A-458B-87B8-E6513D6B0C72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFFD4A71-F57A-458B-87B8-E6513D6B0C72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFFD4A71-F57A-458B-87B8-E6513D6B0C72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
