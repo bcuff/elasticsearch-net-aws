@@ -13,18 +13,18 @@
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch elastic search aws amazon</tags>
     <dependencies>
-      <group targetFramework="net45">
+      <group targetFramework=".NETFramework4.5">
         <dependency id="Elasticsearch.Net" version="2.0.2" />
       </group>
-      <group targetFramework="netstandard1.6">
+      <group targetFramework=".NETStandard1.6">
         <dependency id="Newtonsoft.Json" version="9.0.1" />
         <dependency id="Microsoft.AspNetCore.WebUtilities" version="1.0.0" />
         <dependency id="Elasticsearch.Net" version="2.4.6" />
       </group>
     </dependencies>
   </metadata>
-  <!--<files>
-    <file src="Elasticsearch.Net.Aws\bin\Release\Elasticsearch.Net.Aws.dll" target="lib\net45\Elasticsearch.Net.Aws.dll" />
-    <file src="Elasticsearch.Net.Aws.NetStandard\bin\Release\netstandard1.6\Elasticsearch.Net.Aws.NetStandard.dll" target="lib\netstandard1.6\Elasticsearch.Net.Aws.dll" />
-  </files>-->
+  <files>
+    <file src="bin\Release\net45\Elasticsearch.Net.Aws.dll" target="lib\net45\Elasticsearch.Net.Aws.dll" />
+    <file src="bin\Release\netstandard1.6\Elasticsearch.Net.Aws.dll" target="lib\netstandard1.6\Elasticsearch.Net.Aws.dll" />
+  </files>
 </package>
