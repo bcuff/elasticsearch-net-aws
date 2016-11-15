@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-*",
+  "version": "2.1.5",
 
   "buildOptions": { "outputName": "Elasticsearch.Net.Aws" },
 
@@ -15,8 +15,7 @@
         "System.Web.Extensions": "4.0.0.0"
       }
     },
-    "netstandard1.6": {
-      "imports": "dnxcore50",
+    "netstandard1.3": {
       "dependencies": {
         "Microsoft.AspNetCore.WebUtilities": "1.0.0",
         "Elasticsearch.Net": "2.4.6",

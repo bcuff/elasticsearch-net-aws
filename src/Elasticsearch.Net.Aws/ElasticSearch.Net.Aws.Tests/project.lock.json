@@ -2588,9 +2588,9 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "Elasticsearch.Net.Aws/1.0.0": {
+      "Elasticsearch.Net.Aws/2.1.5": {
         "type": "project",
-        "framework": ".NETStandard,Version=v1.6",
+        "framework": ".NETStandard,Version=v1.3",
         "dependencies": {
           "Elasticsearch.Net": "2.4.6",
           "Microsoft.AspNetCore.WebUtilities": "1.0.0",
@@ -2598,10 +2598,10 @@
           "Newtonsoft.Json": "9.0.1"
         },
         "compile": {
-          "netstandard1.6/Elasticsearch.Net.Aws.dll": {}
+          "netstandard1.3/Elasticsearch.Net.Aws.dll": {}
         },
         "runtime": {
-          "netstandard1.6/Elasticsearch.Net.Aws.dll": {}
+          "netstandard1.3/Elasticsearch.Net.Aws.dll": {}
         }
       }
     },
@@ -2939,7 +2939,7 @@
           "lib/net45/_._": {}
         }
       },
-      "Elasticsearch.Net.Aws/1.0.0": {
+      "Elasticsearch.Net.Aws/2.1.5": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
         "dependencies": {
@@ -3250,7 +3250,7 @@
       ]
     },
     "Microsoft.NETCore.App/1.0.1": {
-      "sha512": "Sw1Gn/H8CgKk1t1qqWa1aDre98gGbYLYcRZ49x5SD8tITlUNvcdsrysTFSg+HZlf1X/Pl+SBv/g21PXJ/ZwMUg==",
+      "sha512": "1ZiTaAAc3Msi4siXtdVmallNCrFA5ZUzoGkIh4litHjBJBZcRgWvwRXT60woB5FpWPC9qDiTFc6L1Gr8EbOPog==",
       "type": "package",
       "path": "Microsoft.NETCore.App/1.0.1",
       "files": [
@@ -3298,7 +3298,7 @@
       ]
     },
     "Microsoft.NETCore.Jit/1.0.4": {
-      "sha512": "Uj8ydRCkUliUaU4/PVoAUVT8t92HZ5UJgAvnI03WfJ7MEWhHEugN3tuLSnHk0cbmT77zMT+1i/yJz2GeOOFObw==",
+      "sha512": "s336ryZlopR+pQ4VfKlILX1LxiQzpCPnmiGot0p5aFPeCjwmKtHC88MI8jXdvdGPySON9i1bPUKJP8jiiPIAjA==",
       "type": "package",
       "path": "Microsoft.NETCore.Jit/1.0.4",
       "files": [
@@ -3336,7 +3336,7 @@
       ]
     },
     "Microsoft.NETCore.Runtime.CoreCLR/1.0.4": {
-      "sha512": "dJ3eycXQ6mapkqljjHYcGOdDsX0RJPTycoj0b0hZRp0MJFrshNQKemvH56hgdBd6YK/2RNTGTEbBkmvyGLnjLg==",
+      "sha512": "NTd+F7MQJi5wFh6Hq3uVH0L3om+pVcfF+bpw0hSd+Ka92QSZ4IfDJw/IWqTQ9jUtLyWYR4XR+52HD5HW+a+zoQ==",
       "type": "package",
       "path": "Microsoft.NETCore.Runtime.CoreCLR/1.0.4",
       "files": [
@@ -7338,7 +7338,7 @@
       ]
     },
     "System.Security.Principal/4.0.1": {
-      "sha512": "On+SKhXY5rzxh/S8wlH1Rm0ogBlu7zyHNxeNBiXauNrhHRXAe9EuX8Yl5IOzLPGU5Z4kLWHMvORDOCG8iu9hww==",
+      "sha512": "UnoYATXCCjARJRyfBuhlF3Qd76qNyplutZmbOdA8ipmlt90qsHoSAH9mvh9dIZlvmlBn9S1RgghLt7foJWo6qQ==",
       "type": "package",
       "path": "System.Security.Principal/4.0.1",
       "files": [
@@ -8308,7 +8308,7 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "Elasticsearch.Net.Aws/1.0.0": {
+    "Elasticsearch.Net.Aws/2.1.5": {
       "type": "project",
       "path": "../Elasticsearch.Net.Aws/project.json",
       "msbuildProject": "../Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.xproj"
