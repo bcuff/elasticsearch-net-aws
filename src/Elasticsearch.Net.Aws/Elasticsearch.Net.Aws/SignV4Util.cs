@@ -155,7 +155,10 @@ namespace Elasticsearch.Net.Aws
             }
         }
 
-#if NETSTANDARD1_6
+#if NET45
+         private static NameValueCollection ParseQueryString(string query) =>
+            System.Web.HttpUtility.ParseQueryString(query);
+#else
         private static NameValueCollection ParseQueryString(string query) =>
             Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(query)
                 .Aggregate(new NameValueCollection(), (col, kv) =>
@@ -163,12 +166,26 @@ namespace Elasticsearch.Net.Aws
                     kv.Value.ToList().ForEach(v => col.Add(kv.Key, v));
                     return col;
                 });
+#endif
+        public static string GetCanonicalQueryString(this Uri uri)
+        {
+            if (string.IsNullOrWhiteSpace(uri.Query)) return string.Empty;
+            var queryParams = ParseQueryString(uri.Query);
+            var q = from string key in queryParams
+                    orderby key
+                    from value in queryParams.GetValues(key)
+                    select new { key, value };
 
-        private static void WriteEncoded(this StringBuilder output, string value) =>
-            output.Append(WebUtility.UrlEncode(value));
-#elif NET45
-         private static NameValueCollection ParseQueryString(string query) =>
-            System.Web.HttpUtility.ParseQueryString(query);
+            var output = new StringBuilder();
+            foreach (var param in q)
+            {
+                if (output.Length > 0) output.Append('&');
+                output.WriteEncoded(param.key);
+                output.Append('=');
+                output.WriteEncoded(param.value);
+            }
+            return output.ToString();
+        }
 
         private static void WriteEncoded(this StringBuilder output, string value)
         {
@@ -176,7 +193,7 @@ namespace Elasticsearch.Net.Aws
             {
                 if (value[i].RequiresEncoding())
                 {
-                    output.Append(Uri.HexEscape(value[i]));
+                    output.Append(Uri.EscapeDataString(value[i].ToString()));
                 }
                 else
                 {
@@ -199,27 +216,6 @@ namespace Elasticsearch.Net.Aws
                     return false;
             }
             return true;
-        }
-#endif
-
-        public static string GetCanonicalQueryString(this Uri uri)
-        {
-            if (string.IsNullOrWhiteSpace(uri.Query)) return string.Empty;
-            var queryParams = ParseQueryString(uri.Query);
-            var q = from string key in queryParams
-                    orderby key
-                    from value in queryParams.GetValues(key)
-                    select new { key, value };
-
-            var output = new StringBuilder();
-            foreach (var param in q)
-            {
-                if (output.Length > 0) output.Append('&');
-                output.WriteEncoded(param.key);
-                output.Append('=');
-                output.WriteEncoded(param.value);
-            }
-            return output.ToString();
         }
 
         static readonly byte[] _emptyBytes = new byte[0];

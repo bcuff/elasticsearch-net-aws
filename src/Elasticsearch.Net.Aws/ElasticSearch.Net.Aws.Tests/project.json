@@ -24,12 +24,6 @@
       }
     },
     "net451": {
-      "dependencies": {
-        "Elasticsearch.Net": "2.0.2"
-      },
-      "frameworkAssemblies": {
-        "System.Net": "4.0.0.0"
-      }
     }
   }
 }

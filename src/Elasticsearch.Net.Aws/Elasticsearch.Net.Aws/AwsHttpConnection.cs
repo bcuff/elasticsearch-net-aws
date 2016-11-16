@@ -70,18 +70,7 @@ namespace Elasticsearch.Net.Aws
         {
         }
 
-#if NETSTANDARD1_6
-        protected override HttpRequestMessage CreateHttpRequestMessage(RequestData requestData)
-        {
-            if (_authType == AuthType.InstanceProfile)
-            {
-                RefreshCredentials();
-            }
-            var request = base.CreateHttpRequestMessage(requestData);
-            SignRequest(new HttpRequestMessageAdapter(request), requestData);
-            return request;
-        }
-#elif NET45
+#if NET45
         protected override System.Net.HttpWebRequest CreateHttpWebRequest(RequestData requestData)
         {
             if (_authType == AuthType.InstanceProfile)
@@ -92,8 +81,18 @@ namespace Elasticsearch.Net.Aws
             SignRequest(new HttpWebRequestAdapter(request), requestData);
             return request;
         }
+#else
+        protected override HttpRequestMessage CreateHttpRequestMessage(RequestData requestData)
+        {
+            if (_authType == AuthType.InstanceProfile)
+            {
+                RefreshCredentials();
+            }
+            var request = base.CreateHttpRequestMessage(requestData);
+            SignRequest(new HttpRequestMessageAdapter(request), requestData);
+            return request;
+        }
 #endif
-
         private void SignRequest(IRequest request, RequestData requestData)
         {
             byte[] data = null;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -13,14 +14,6 @@ namespace Elasticsearch.Net.Aws
         private const string SuccessCode = "Success";
         private static InstanceProfileCredentials _cachedCredentials;
         private static readonly object CacheLock = new object();
-
-#if NETSTANDARD1_6
-        private static InstanceProfileCredentials Deserialize(string json) =>
-            Newtonsoft.Json.JsonConvert.DeserializeObject<InstanceProfileCredentials>(json);
-#elif NET45
-         private static InstanceProfileCredentials Deserialize(string json) =>
-            new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<InstanceProfileCredentials>(json);
-#endif
 
         internal static InstanceProfileCredentials GetCredentials()
         {
@@ -34,7 +27,7 @@ namespace Elasticsearch.Net.Aws
                 {
                     var role = GetFirstRole();
                     var json = GetContents(new Uri(Server + RolesPath + role));
-                    var credentials = Deserialize(json);
+                    var credentials = JsonConvert.DeserializeObject<InstanceProfileCredentials>(json);
 
                     if (credentials.Code != SuccessCode)
                         return null;

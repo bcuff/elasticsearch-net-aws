@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
 
   "dependencies": {
@@ -17,7 +17,6 @@
     "netcoreapp1.0": {
       "imports": "dnxcore50",
       "dependencies": {
-        "Elasticsearch.Net": "2.4.6",
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.1"
@@ -25,12 +24,6 @@
       }
     },
     "net451": {
-      "dependencies": {
-        "Elasticsearch.Net": "2.0.2"
-      },
-      "frameworkAssemblies": {
-        "System.Net": "4.0.0.0"
-      }
     }
   }
 }
