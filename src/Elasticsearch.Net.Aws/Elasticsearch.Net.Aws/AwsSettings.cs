@@ -24,5 +24,11 @@ namespace Elasticsearch.Net.Aws
         /// </summary>
         public string SecretKey { get; set; }
 
+        /// <summary>
+        /// Gets or sets the security token
+        ///  Required.
+        /// </summary>
+        public string Token { get; set; }
+
     }
 }
