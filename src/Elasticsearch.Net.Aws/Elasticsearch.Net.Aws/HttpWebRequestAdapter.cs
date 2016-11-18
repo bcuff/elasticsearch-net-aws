@@ -7,7 +7,7 @@ using System.Net;
 
 namespace Elasticsearch.Net.Aws
 {
-    public class HttpWebRequestAdapter : IRequest
+    internal class HttpWebRequestAdapter : IRequest
     {
         private class HeadersAdapter : IHeaders
         {

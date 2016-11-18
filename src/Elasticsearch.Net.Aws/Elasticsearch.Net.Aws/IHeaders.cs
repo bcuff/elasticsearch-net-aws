@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Elasticsearch.Net.Aws
 {
-    public interface IHeaders
+    internal interface IHeaders
     {
         string XAmzDate { get; set; }
         string Authorization { get; set; }

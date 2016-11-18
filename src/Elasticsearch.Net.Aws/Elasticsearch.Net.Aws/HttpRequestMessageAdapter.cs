@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Elasticsearch.Net.Aws
 {
-    public class HttpRequestMessageAdapter : IRequest
+    internal class HttpRequestMessageAdapter : IRequest
     {
         private class HeadersAdapter : IHeaders
         {

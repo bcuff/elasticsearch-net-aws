@@ -2,7 +2,7 @@
 
 namespace Elasticsearch.Net.Aws
 {
-    public interface IRequest
+    internal interface IRequest
     {
         IHeaders Headers { get; }
         string Method { get; }
