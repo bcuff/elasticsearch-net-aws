@@ -24,5 +24,15 @@ namespace Elasticsearch.Net.Aws
         /// </summary>
         public string SecretKey { get; set; }
 
+        /// <summary>
+        /// Gets or sets the AWS Session Token.
+        /// </summary>
+        public string Token { get; set; }
+
+        /// <summary>
+        /// Gets or sets if the AWS Session Token is needed.
+        /// </summary>
+        public bool UseToken { get; set; }
+
     }
 }
