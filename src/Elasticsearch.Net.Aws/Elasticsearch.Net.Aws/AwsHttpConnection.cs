@@ -49,6 +49,7 @@ namespace Elasticsearch.Net.Aws
                 {
                     AccessKey = key,
                     SecretKey = secret,
+                    Token = awsSettings.UseToken ? awsSettings.Token : null
                 };
                 _authType = AuthType.AccessKey;
             }
