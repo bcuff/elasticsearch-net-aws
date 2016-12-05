@@ -197,3 +197,6 @@ FakesAssemblies/
 
 # VIM files
 .*.swp
+
+# lock files
+*.lock.json
