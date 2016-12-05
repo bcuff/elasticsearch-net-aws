@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Web.Script.Serialization;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -12,7 +12,6 @@ namespace Elasticsearch.Net.Aws
         private const string Server = "http://169.254.169.254";
         private const string RolesPath = "/latest/meta-data/iam/security-credentials/";
         private const string SuccessCode = "Success";
-        private static readonly JavaScriptSerializer CredentialSerializer = new JavaScriptSerializer();
         private static InstanceProfileCredentials _cachedCredentials;
         private static readonly object CacheLock = new object();
 
@@ -28,7 +27,7 @@ namespace Elasticsearch.Net.Aws
                 {
                     var role = GetFirstRole();
                     var json = GetContents(new Uri(Server + RolesPath + role));
-                    var credentials = CredentialSerializer.Deserialize<InstanceProfileCredentials>(json);
+                    var credentials = JsonConvert.DeserializeObject<InstanceProfileCredentials>(json);
 
                     if (credentials.Code != SuccessCode)
                         return null;
@@ -84,14 +83,13 @@ namespace Elasticsearch.Net.Aws
         {
             try
             {
-                var request = WebRequest.Create(uri) as HttpWebRequest;
-                using (var response = request.GetResponse() as HttpWebResponse)
-                using (var reader = new StreamReader(response.GetResponseStream()))
+                using (var client = new HttpClient())
+                using (var reader = new StreamReader(client.GetStreamAsync(uri).Result))
                 {
                     return reader.ReadToEnd();
                 }
             }
-            catch (WebException ex)
+            catch (HttpRequestException ex)
             {
                 throw new Exception("Unable to reach credentials server", ex);
             }

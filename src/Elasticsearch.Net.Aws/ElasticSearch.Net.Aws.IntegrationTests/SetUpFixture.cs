@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Elasticsearch.Net.Aws;
 using NUnit.Framework;
 
@@ -13,8 +13,7 @@ namespace IntegrationTests
         public void SetUp()
         {
             var json = File.ReadAllText("TargetConfig.json").Trim();
-            var serializer = new JavaScriptSerializer();
-            var config =serializer.Deserialize<Dictionary<string, string>>(json);
+            var config = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
             TestConfig.Endpoint = config["endpoint"];
             TestConfig.AwsSettings = new AwsSettings

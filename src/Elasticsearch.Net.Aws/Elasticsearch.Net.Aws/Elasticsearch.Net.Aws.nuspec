@@ -2,16 +2,31 @@
 <package >
   <metadata>
     <id>Elasticsearch.Net.Aws</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <version>2.1.6</version>
+    <title>Elasticsearch.Net.Aws</title>
+    <authors>Brandon Cuff</authors>
     <licenseUrl>https://raw.githubusercontent.com/bcuff/elasticsearch-net-aws/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/bcuff/elasticsearch-net-aws</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>Enables request signing necessary for using the AWS Elasticsearch service.</description>
     <releaseNotes>Signed the assembly.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch elastic search aws amazon</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework,Version=4.5">
+        <dependency id="Elasticsearch.Net" version="2.4.6" />
+        <dependency id="Newtonsoft.Json" version="9.0.1" />
+      </group>
+      <group targetFramework=".NETStandard,Version=1.3">
+        <dependency id="NETStandard.Library" version="1.6.0" />
+        <dependency id="Microsoft.AspNetCore.WebUtilities" version="1.0.0" />
+        <dependency id="Elasticsearch.Net" version="2.4.6" />
+        <dependency id="Newtonsoft.Json" version="9.0.1" />
+      </group>
+    </dependencies>
   </metadata>
+  <files>
+    <file src="bin\Release\net45\Elasticsearch.Net.Aws.dll" target="lib\net45\Elasticsearch.Net.Aws.dll" />
+    <file src="bin\Release\netstandard1.3\Elasticsearch.Net.Aws.dll" target="lib\netstandard1.3\Elasticsearch.Net.Aws.dll" />
+  </files>
 </package>

@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Net;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -14,12 +14,12 @@ namespace Elasticsearch.Net.Aws
     {
         static readonly char[] _datePartSplitChars = { 'T' };
 
-        public static void SignRequest(HttpWebRequest request, byte[] body, Credentials credentials, string region, string service)
+        public static void SignRequest(IRequest request, byte[] body, Credentials credentials, string region, string service)
         {
             var date = DateTime.UtcNow;
             var dateStamp = date.ToString("yyyyMMdd");
             var amzDate = date.ToString("yyyyMMddTHHmmssZ");
-            request.Headers["X-Amz-Date"] = amzDate;
+            request.Headers.XAmzDate = amzDate;
 
             var signingKey = GetSigningKey(credentials.SecretKey, dateStamp, region, service);
             var stringToSign = GetStringToSign(request, body, region, service);
@@ -32,9 +32,9 @@ namespace Elasticsearch.Net.Aws
                 GetSignedHeaders(request),
                 signature);
 
-            request.Headers[HttpRequestHeader.Authorization] = auth;
+            request.Headers.Authorization = auth;
             if (!String.IsNullOrWhiteSpace(credentials.Token))
-                request.Headers["x-amz-security-token"] = credentials.Token;
+                request.Headers.XAmzSecurityToken = credentials.Token;
         }
 
         public static byte[] GetSigningKey(string secretKey, string dateStamp, string region, string service)
@@ -48,18 +48,18 @@ namespace Elasticsearch.Net.Aws
 
         private static byte[] GetHmacSha256Hash(this byte[] key, string data)
         {
-            using (var kha = KeyedHashAlgorithm.Create("HmacSHA256"))
+            using (var kha = new HMACSHA256())
             {
                 kha.Key = key;
                 return kha.ComputeHash(_encoding.GetBytes(data));
             }
         }
 
-        public static string GetStringToSign(HttpWebRequest request, byte[] data, string region, string service)
+        public static string GetStringToSign(IRequest request, byte[] data, string region, string service)
         {
             var canonicalRequest = GetCanonicalRequest(request, data);
             Debug.Write("========== Canonical Request ==========\r\n{0}\r\n========== Canonical Request ==========\r\n", canonicalRequest);
-            var awsDate = request.Headers["x-amz-date"];
+            var awsDate = request.Headers.XAmzDate;
             Debug.Assert(Regex.IsMatch(awsDate, @"\d{8}T\d{6}Z"));
             var datePart = awsDate.Split(_datePartSplitChars, 2)[0];
             return string.Join("\n",
@@ -75,7 +75,7 @@ namespace Elasticsearch.Net.Aws
             return string.Format("{0}/{1}/{2}/aws4_request", date, region, service);
         }
 
-        public static string GetCanonicalRequest(HttpWebRequest request, byte[] data)
+        public static string GetCanonicalRequest(IRequest request, byte[] data)
         {
             var canonicalHeaders = request.GetCanonicalHeaders();
             var result = new StringBuilder();
@@ -96,23 +96,23 @@ namespace Elasticsearch.Net.Aws
         private static string GetPath(Uri uri)
         {
             var path = uri.AbsolutePath;
-            if(path.Length == 0) return "/";
+            if (path.Length == 0) return "/";
 
             IEnumerable<string> segments = path
                 .Split('/')
                 .Select(segment =>
-                    {
-                        string escaped = HttpUtility.UrlEncode(segment);
-                        escaped = escaped.Replace("*", "%2A");
-                        return escaped;
-                    }
+                {
+                    string escaped = WebUtility.UrlEncode(segment);
+                    escaped = escaped.Replace("*", "%2A");
+                    return escaped;
+                }
                 );
             return string.Join("/", segments);
         }
 
-        private static Dictionary<string, string> GetCanonicalHeaders(this HttpWebRequest request)
+        private static Dictionary<string, string> GetCanonicalHeaders(this IRequest request)
         {
-            var q = from string key in request.Headers
+            var q = from string key in request.Headers.Keys
                     let headerName = key.ToLowerInvariant()
                     let headerValues = string.Join(",",
                         request.Headers
@@ -136,7 +136,7 @@ namespace Elasticsearch.Net.Aws
             }
         }
 
-        private static string GetSignedHeaders(HttpWebRequest request)
+        private static string GetSignedHeaders(IRequest request)
         {
             var canonicalHeaders = request.GetCanonicalHeaders();
             var result = new StringBuilder();
@@ -155,10 +155,22 @@ namespace Elasticsearch.Net.Aws
             }
         }
 
+#if NET45
+         private static NameValueCollection ParseQueryString(string query) =>
+            System.Web.HttpUtility.ParseQueryString(query);
+#else
+        private static NameValueCollection ParseQueryString(string query) =>
+            Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(query)
+                .Aggregate(new NameValueCollection(), (col, kv) =>
+                {
+                    kv.Value.ToList().ForEach(v => col.Add(kv.Key, v));
+                    return col;
+                });
+#endif
         public static string GetCanonicalQueryString(this Uri uri)
         {
             if (string.IsNullOrWhiteSpace(uri.Query)) return string.Empty;
-            var queryParams = HttpUtility.ParseQueryString(uri.Query);
+            var queryParams = ParseQueryString(uri.Query);
             var q = from string key in queryParams
                     orderby key
                     from value in queryParams.GetValues(key)
@@ -181,7 +193,7 @@ namespace Elasticsearch.Net.Aws
             {
                 if (value[i].RequiresEncoding())
                 {
-                    output.Append(Uri.HexEscape(value[i]));
+                    output.Append(Uri.EscapeDataString(value[i].ToString()));
                 }
                 else
                 {
@@ -237,7 +249,7 @@ namespace Elasticsearch.Net.Aws
 
         private static byte[] GetHash(this byte[] data)
         {
-            using (var algo = HashAlgorithm.Create("SHA256"))
+            using (var algo = SHA256.Create())
             {
                 return algo.ComputeHash(data);
             }

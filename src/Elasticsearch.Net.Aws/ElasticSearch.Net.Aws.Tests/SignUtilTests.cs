@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
 using System.Text;
 using Elasticsearch.Net.Aws;
 using NUnit.Framework;
@@ -11,18 +9,27 @@ namespace Tests
     [TestFixture]
     public class SignUtilTests
     {
-        HttpWebRequest _sampleRequest;
+        IRequest _sampleRequest;
         byte[] _sampleBody;
 
         [SetUp]
         public void SetUp()
         {
-            _sampleRequest = WebRequest.CreateHttp("https://iam.amazonaws.com/");
-            _sampleRequest.Method = "POST";
-            _sampleRequest.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
-            _sampleRequest.Headers["X-Amz-Date"] = "20110909T233600Z";
             var encoding = new UTF8Encoding(false);
             _sampleBody = encoding.GetBytes("Action=ListUsers&Version=2010-05-08");
+#if NETCOREAPP1_0
+            var request = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, "https://iam.amazonaws.com/");
+            request.Content = new System.Net.Http.ByteArrayContent(_sampleBody);
+            request.Content.Headers.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+            request.Headers.TryAddWithoutValidation("X-Amz-Date", "20110909T233600Z");
+            _sampleRequest = new HttpRequestMessageAdapter(request);
+#elif NET451
+            var request = System.Net.WebRequest.CreateHttp("https://iam.amazonaws.com/");
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
+            request.Headers["X-Amz-Date"] = "20110909T233600Z";
+            _sampleRequest = new HttpWebRequestAdapter(request);
+#endif
         }
 
         [Test]
@@ -80,16 +87,16 @@ namespace Tests
             };
             SignV4Util.SignRequest(_sampleRequest, _sampleBody, creds, "us-east-1", "iam");
 
-            var amzDate = _sampleRequest.Headers["X-Amz-Date"];
-            Assert.IsNotNullOrEmpty(amzDate);
+            var amzDate = _sampleRequest.Headers.XAmzDate;
+            Assert.False(String.IsNullOrEmpty(amzDate));
             Trace.WriteLine("X-Amz-Date: " + amzDate);
 
-            var auth = _sampleRequest.Headers[HttpRequestHeader.Authorization];
-            Assert.IsNotNullOrEmpty(auth);
+            var auth = _sampleRequest.Headers.Authorization;
+            Assert.False(String.IsNullOrEmpty(auth));
             Trace.WriteLine("Authorize: " + auth);
 
-            var token = _sampleRequest.Headers["x-amz-security-token"];
-            Assert.IsNotNullOrEmpty(token);
+            var token = _sampleRequest.Headers.XAmzSecurityToken;
+            Assert.False(String.IsNullOrEmpty(token));
             Trace.WriteLine("Token: " + token);
         }
 
