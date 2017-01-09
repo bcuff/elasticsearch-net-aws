@@ -9,7 +9,7 @@ namespace IntegrationTests
     [SetUpFixture]
     public class SetUpFixture
     {
-        [SetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
             var json = File.ReadAllText("TargetConfig.json").Trim();
