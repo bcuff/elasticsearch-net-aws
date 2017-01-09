@@ -26,6 +26,7 @@ namespace Elasticsearch.Net.Aws
                 if (GetCachedCredentials() == null)
                 {
                     var role = GetFirstRole();
+                    if (role == null) return null;
                     var json = GetContents(new Uri(Server + RolesPath + role));
                     var credentials = JsonConvert.DeserializeObject<InstanceProfileCredentials>(json);
 
@@ -33,7 +34,6 @@ namespace Elasticsearch.Net.Aws
                         return null;
 
                     _cachedCredentials = credentials;
-
                 }
             }
 
@@ -60,8 +60,7 @@ namespace Elasticsearch.Net.Aws
                 return role;
             }
 
-            // no roles found
-            throw new InvalidOperationException("No roles found");
+            return null;
         }
 
         private static IEnumerable<string> GetAvailableRoles()

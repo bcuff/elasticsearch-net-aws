@@ -1,6 +1,6 @@
 ﻿{
-	"endpoint": "<your aws elasticsearch service endpoint>",
-	"accessKey": "<your access key>",
-	"secretKey": "<your secret key>",
+	"endpoint": "https://search-withbuddies-dice-main-p4glqrlqalzkat56gefpr3rff4.us-east-1.es.amazonaws.com",
+	"accessKey": "AKIAIFAZV6WDUFGVYABA",
+	"secretKey": "TpGKfrKAkiX91aWdXK0uCc0l2u+LARgofJvYu3pp",
 	"region": "us-east-1"
 }

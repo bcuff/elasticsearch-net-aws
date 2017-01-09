@@ -9,56 +9,26 @@ namespace Elasticsearch.Net.Aws
     /// </summary>
     public class AwsHttpConnection : HttpConnection
     {
-        private static string GetAccessKey(AwsSettings awsSettings)
-        {
-            var key = awsSettings.AccessKey;
-            if (!string.IsNullOrWhiteSpace(key)) return key;
-#if NET45
-            key = System.Configuration.ConfigurationManager.AppSettings["AWSAccessKey"];
-            if (!string.IsNullOrWhiteSpace(key)) return key;
-#endif
-            return Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
-        }
-
-        private static string GetSecretKey(AwsSettings awsSettings)
-        {
-            var key = awsSettings.SecretKey;
-            if (!string.IsNullOrWhiteSpace(key)) return key;
-#if NET45
-            key = System.Configuration.ConfigurationManager.AppSettings["AWSSecretKey"];
-            if (!string.IsNullOrWhiteSpace(key)) return key;
-#endif
-            return Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
-        }
-
-        private Credentials _credentials;
+        private readonly ICredentialsProvider _credentialsProvider;
         private readonly string _region;
-        private readonly AuthType _authType;
 
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with the specified AccessKey, SecretKey and Token.
         /// </summary>
         /// <param name="awsSettings">AWS specific settings required for signing requests.</param>
+        [Obsolete("Use AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)")]
         public AwsHttpConnection(AwsSettings awsSettings)
         {
-            if (awsSettings == null) throw new ArgumentNullException("awsSettings");
-            if (string.IsNullOrWhiteSpace(awsSettings.Region)) throw new ArgumentException("awsSettings.Region is invalid.", "awsSettings");
+            if (awsSettings == null) throw new ArgumentNullException(nameof(awsSettings));
+            if (string.IsNullOrWhiteSpace(awsSettings.Region)) throw new ArgumentException("awsSettings.Region is invalid.", nameof(awsSettings));
             _region = awsSettings.Region.ToLowerInvariant();
-            var key = GetAccessKey(awsSettings);
-            var secret = GetSecretKey(awsSettings);
-            if (!string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(secret))
+            if (!string.IsNullOrWhiteSpace(awsSettings.AccessKey) && !string.IsNullOrWhiteSpace(awsSettings.SecretKey))
             {
-                _credentials = new Credentials
-                {
-                    AccessKey = key,
-                    SecretKey = secret,
-                    Token = awsSettings.Token
-                };
-                _authType = AuthType.AccessKey;
+                _credentialsProvider = new StaticCredentialsProvider(awsSettings);
             }
             else
             {
-                _authType = AuthType.InstanceProfile;
+                _credentialsProvider = CredentialChainProvider.Default;
             }
         }
 
@@ -67,17 +37,28 @@ namespace Elasticsearch.Net.Aws
         /// </summary>
         /// <param name="region">AWS region</param>
         public AwsHttpConnection(string region)
-            : this(new AwsSettings { Region = region })
+            : this(region, CredentialChainProvider.Default)
         {
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the AwsHttpConnection class with credentials from the Instance Profile service
+        /// </summary>
+        /// <param name="region">AWS region</param>
+        /// <param name="credentialsProvider">The credentials provider.</param>
+        public AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)
+        {
+            if (region == null) throw new ArgumentNullException(nameof(region));
+            if (string.IsNullOrWhiteSpace(region)) throw new ArgumentException("region is invalid", nameof(region));
+            if (credentialsProvider == null) throw new ArgumentNullException(nameof(credentialsProvider));
+            _region = region.ToLowerInvariant();
+            _credentialsProvider = credentialsProvider;
         }
 
 #if NET45
         protected override System.Net.HttpWebRequest CreateHttpWebRequest(RequestData requestData)
         {
-            if (_authType == AuthType.InstanceProfile)
-            {
-                RefreshCredentials();
-            }
             var request = base.CreateHttpWebRequest(requestData);
             SignRequest(new HttpWebRequestAdapter(request), requestData);
             return request;
@@ -85,10 +66,6 @@ namespace Elasticsearch.Net.Aws
 #else
         protected override HttpRequestMessage CreateHttpRequestMessage(RequestData requestData)
         {
-            if (_authType == AuthType.InstanceProfile)
-            {
-                RefreshCredentials();
-            }
             var request = base.CreateHttpRequestMessage(requestData);
             SignRequest(new HttpRequestMessageAdapter(request), requestData);
             return request;
@@ -109,21 +86,12 @@ namespace Elasticsearch.Net.Aws
                     }
                 }
             }
-            SignV4Util.SignRequest(request, data, _credentials, _region, "es");
-        }
-
-        private void RefreshCredentials()
-        {
-            var credentials = InstanceProfileService.GetCredentials();
+            var credentials = _credentialsProvider.GetCredentials();
             if (credentials == null)
-                throw new Exception("Unable to retrieve session credentials from instance profile service");
-
-            _credentials = new Credentials
             {
-                AccessKey = credentials.AccessKeyId,
-                SecretKey = credentials.SecretAccessKey,
-                Token = credentials.Token,
-            };
+                throw new Exception("Unable to retrieve credentials required to sign the request.");
+            }
+            SignV4Util.SignRequest(request, data, credentials, _region, "es");
         }
     }
 }

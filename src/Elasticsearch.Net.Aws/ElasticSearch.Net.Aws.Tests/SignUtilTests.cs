@@ -79,7 +79,7 @@ namespace Tests
         [Test]
         public void SignRequest_should_apply_signature_to_request()
         {
-            var creds = new Credentials
+            var creds = new AwsCredentials
             {
                 AccessKey = "ExampleKey",
                 SecretKey =  "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY",
