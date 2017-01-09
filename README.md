@@ -21,14 +21,13 @@ Install-Package Elasticsearch.Net.Aws-v1
 // for NEST
 
 // if using an access key
-var httpConnection = new AwsHttpConnection(new AwsSettings
+var httpConnection = new AwsHttpConnection("us-east-1", new StaticCredentialProvider(new AwsCredentials
 {
 	AccessKey = "My AWS access key",
 	SecretKey = "My AWS secret key",
-	Region = "us-east-1",
-});
+}));
 
-// if using roles
+// if using app.config, environment variables, or roles
 var httpConnection = new AwsHttpConnection("us-east-1");
 
 var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
