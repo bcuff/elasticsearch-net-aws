@@ -27,7 +27,7 @@ namespace Elasticsearch.Net.Aws
             SignV4Util.SignRequest(request, body, credentials, regionService.Item1, regionService.Item2);
         }
 
-        static readonly Regex _regionRegex = new Regex(@"\.([\w-]+)\.\w+\.amazonaws\.com$", RegexOptions.Compiled);
+        static readonly Regex _regionRegex = new Regex(@"\.([\w-]+)\.([\w-]+)\.amazonaws\.com$", RegexOptions.Compiled);
 
         private static Tuple<string, string> ExtractRegionAndService(Uri url)
         {
