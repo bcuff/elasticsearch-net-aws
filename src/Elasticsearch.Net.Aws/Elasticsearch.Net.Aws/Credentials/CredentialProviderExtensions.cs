@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Elasticsearch.Net.Aws.Credentials
+namespace Elasticsearch.Net.Aws
 {
     public static class CredentialProviderExtensions
     {
