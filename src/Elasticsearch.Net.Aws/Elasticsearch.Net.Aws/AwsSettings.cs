@@ -4,29 +4,13 @@ using System.Linq;
 namespace Elasticsearch.Net.Aws
 {
     /// <summary>
-    /// Encapsulates 
+    /// Encapsulates AWS settings needed to talk to elasticsearch
     /// </summary>
-    public class AwsSettings
+    public class AwsSettings : AwsCredentials
     {
         /// <summary>
         /// Gets or sets the region. e.g. us-east-1. Required.
         /// </summary>
         public string Region { get; set; }
-
-        /// <summary>
-        /// Gets or sets the AWS access key. Required.
-        /// </summary>
-        public string AccessKey { get; set; }
-
-        /// <summary>
-        /// Gets or sets the AWS secret key. e.g. wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY
-        ///  Required.
-        /// </summary>
-        public string SecretKey { get; set; }
-
-        /// <summary>
-        /// Gets or sets the security token.
-        /// </summary>
-        public string Token { get; set; }
     }
 }

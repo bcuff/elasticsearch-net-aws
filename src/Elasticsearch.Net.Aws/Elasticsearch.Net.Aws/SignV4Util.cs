@@ -14,7 +14,7 @@ namespace Elasticsearch.Net.Aws
     {
         static readonly char[] _datePartSplitChars = { 'T' };
 
-        public static void SignRequest(IRequest request, byte[] body, Credentials credentials, string region, string service)
+        public static void SignRequest(IRequest request, byte[] body, AwsCredentials credentials, string region, string service)
         {
             var date = DateTime.UtcNow;
             var dateStamp = date.ToString("yyyyMMdd");

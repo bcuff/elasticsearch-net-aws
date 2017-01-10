@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>Elasticsearch.Net.Aws</id>
-    <version>2.2.0</version>
+    <version>2.3.3</version>
     <title>Elasticsearch.Net.Aws</title>
     <authors>Brandon Cuff</authors>
     <licenseUrl>https://raw.githubusercontent.com/bcuff/elasticsearch-net-aws/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/bcuff/elasticsearch-net-aws</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Enables request signing necessary for using the AWS Elasticsearch service.</description>
-    <releaseNotes>netcore support.</releaseNotes>
+    <releaseNotes>Introduced credential providers; exposed signing utility functions.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch elastic search aws amazon</tags>
     <dependencies>
