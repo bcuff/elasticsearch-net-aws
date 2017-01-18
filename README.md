@@ -21,7 +21,7 @@ Install-Package Elasticsearch.Net.Aws-v1
 // for NEST
 
 // if using an access key
-var httpConnection = new AwsHttpConnection("us-east-1", new StaticCredentialProvider(new AwsCredentials
+var httpConnection = new AwsHttpConnection("us-east-1", new StaticCredentialsProvider(new AwsCredentials
 {
 	AccessKey = "My AWS access key",
 	SecretKey = "My AWS secret key",
