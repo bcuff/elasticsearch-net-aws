@@ -12,34 +12,31 @@ namespace Elasticsearch.Net.Aws
         private const string Server = "http://169.254.169.254";
         private const string RolesPath = "/latest/meta-data/iam/security-credentials/";
         private const string SuccessCode = "Success";
-        private static InstanceProfileCredentials _cachedCredentials;
+        private static volatile InstanceProfileCredentials _cachedCredentials;
         private static readonly object CacheLock = new object();
 
         internal static InstanceProfileCredentials GetCredentials()
         {
             var cachedCredentials = GetCachedCredentials();
-            if (cachedCredentials != null)
-                return cachedCredentials;
+            if (cachedCredentials != null) return cachedCredentials;
 
             lock (CacheLock)
             {
-                if (GetCachedCredentials() == null)
-                {
-                    var role = GetFirstRole();
-                    if (role == null) return null;
-                    var json = GetContents(new Uri(Server + RolesPath + role));
-                    var credentials = JsonConvert.DeserializeObject<InstanceProfileCredentials>(json);
+                cachedCredentials = GetCachedCredentials();
+                if (cachedCredentials != null) return cachedCredentials;
 
-                    if (credentials.Code != SuccessCode)
-                        return null;
+                var role = GetFirstRole();
+                if (role == null) return null;
+                var json = GetContents(new Uri(Server + RolesPath + role));
+                var credentials = JsonConvert.DeserializeObject<InstanceProfileCredentials>(json);
 
-                    credentials.LastObtained = DateTime.UtcNow;
+                if (credentials.Code != SuccessCode)
+                    return null;
 
-                    _cachedCredentials = credentials;
-                }
+                credentials.LastObtained = DateTime.UtcNow;
+
+                return _cachedCredentials = credentials;
             }
-
-            return GetCachedCredentials();
         }
 
         private static InstanceProfileCredentials GetCachedCredentials()
