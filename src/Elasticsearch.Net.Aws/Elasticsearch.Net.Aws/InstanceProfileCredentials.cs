@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -11,5 +12,8 @@ namespace Elasticsearch.Net.Aws
         public string SecretAccessKey { get; set; }
         public string Token { get; set; }
         public DateTime Expiration { get; set; }
+
+        [JsonIgnore]
+        public DateTime LastObtained { get; set; }
     }
 }

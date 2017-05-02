@@ -33,6 +33,8 @@ namespace Elasticsearch.Net.Aws
                     if (credentials.Code != SuccessCode)
                         return null;
 
+                    credentials.LastObtained = DateTime.UtcNow;
+
                     _cachedCredentials = credentials;
                 }
             }
@@ -42,11 +44,19 @@ namespace Elasticsearch.Net.Aws
 
         private static InstanceProfileCredentials GetCachedCredentials()
         {
-            if (_cachedCredentials != null)
+            var cached = _cachedCredentials;
+            if (cached != null)
             {
-                if (_cachedCredentials.Expiration > DateTime.UtcNow.AddMinutes(15))
+                var now = DateTime.UtcNow;
+                // if we still have at least 10 minutes left
+                if (cached.Expiration > now.AddMinutes(10))
                 {
-                    return _cachedCredentials;
+                    return cached;
+                }
+                // if we got the credentials less than 1 minute ago
+                if ((now - cached.LastObtained) < TimeSpan.FromMinutes(1))
+                {
+                    return cached;
                 }
             }
             return null;
