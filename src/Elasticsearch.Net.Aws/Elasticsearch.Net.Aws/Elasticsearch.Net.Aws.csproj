@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>2.3.3</VersionPrefix>
+    <VersionPrefix>2.3.4</VersionPrefix>
     <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
     <AssemblyName>Elasticsearch.Net.Aws</AssemblyName>
     <PackageId>Elasticsearch.Net.Aws</PackageId>
@@ -21,6 +21,12 @@
     <AssemblyVersion>2.3.4.0</AssemblyVersion>
     <FileVersion>2.3.4.0</FileVersion>
     <Version>2.3.4</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <AssemblyOriginatorKeyFile>$(ProjectDir)..\..\..\key.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
   </PropertyGroup>
 
   <ItemGroup>

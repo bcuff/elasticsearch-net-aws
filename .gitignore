@@ -200,3 +200,6 @@ FakesAssemblies/
 
 # lock files
 *.lock.json
+
+# snk key file
+*.snk
