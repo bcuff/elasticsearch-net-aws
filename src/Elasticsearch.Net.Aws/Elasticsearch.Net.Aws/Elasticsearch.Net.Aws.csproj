@@ -10,6 +10,17 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Brandon Cuff</Authors>
+    <Description>Enables request signing necessary for using the AWS Elasticsearch service.</Description>
+    <Copyright>Copyright 2015</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/bcuff/elasticsearch-net-aws/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/bcuff/elasticsearch-net-aws</PackageProjectUrl>
+    <PackageReleaseNotes>Fixed nuget package installation issue</PackageReleaseNotes>
+    <PackageTags>elasticsearch elastic search aws amazon</PackageTags>
+    <RepositoryUrl>https://github.com/bcuff/elasticsearch-net-aws</RepositoryUrl>
+    <AssemblyVersion>2.3.4.0</AssemblyVersion>
+    <FileVersion>2.3.4.0</FileVersion>
+    <Version>2.3.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
