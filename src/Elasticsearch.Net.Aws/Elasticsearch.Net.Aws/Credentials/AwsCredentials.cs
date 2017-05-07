@@ -25,5 +25,7 @@ namespace Elasticsearch.Net.Aws
         /// Gets or sets the security token.
         /// </summary>
         public string Token { get; set; }
+
+        public bool HasCredentials() => !String.IsNullOrWhiteSpace(AccessKey) && !String.IsNullOrWhiteSpace(SecretKey);
     }
 }

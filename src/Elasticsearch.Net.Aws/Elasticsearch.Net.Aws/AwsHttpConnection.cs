@@ -9,33 +9,26 @@ namespace Elasticsearch.Net.Aws
     /// </summary>
     public class AwsHttpConnection : HttpConnection
     {
-        private readonly ICredentialsProvider _credentialsProvider;
-        private readonly string _region;
+        private readonly ISigner _signer;
 
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with the specified AccessKey, SecretKey and Token.
         /// </summary>
         /// <param name="awsSettings">AWS specific settings required for signing requests.</param>
-        [Obsolete("Use AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)")]
+        [Obsolete("Use AwsHttpConnection(ISigner signer)")]
         public AwsHttpConnection(AwsSettings awsSettings)
+            : this(
+                  awsSettings.Region, 
+                  awsSettings.HasCredentials() ? new StaticCredentialsProvider(awsSettings) : CredentialChainProvider.Default
+            )
         {
-            if (awsSettings == null) throw new ArgumentNullException(nameof(awsSettings));
-            if (string.IsNullOrWhiteSpace(awsSettings.Region)) throw new ArgumentException("awsSettings.Region is invalid.", nameof(awsSettings));
-            _region = awsSettings.Region.ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(awsSettings.AccessKey) && !string.IsNullOrWhiteSpace(awsSettings.SecretKey))
-            {
-                _credentialsProvider = new StaticCredentialsProvider(awsSettings);
-            }
-            else
-            {
-                _credentialsProvider = CredentialChainProvider.Default;
-            }
         }
 
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with credentials from the Instance Profile service
         /// </summary>
         /// <param name="region">AWS region</param>
+        [Obsolete("Use AwsHttpConnection(ISigner signer)")]
         public AwsHttpConnection(string region)
             : this(region, CredentialChainProvider.Default)
         {
@@ -47,13 +40,19 @@ namespace Elasticsearch.Net.Aws
         /// </summary>
         /// <param name="region">AWS region</param>
         /// <param name="credentialsProvider">The credentials provider.</param>
+        [Obsolete("Use AwsHttpConnection(ISigner signer)")]
         public AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)
+            : this(new AwsV4Signer(region, "es", credentialsProvider))
         {
-            if (region == null) throw new ArgumentNullException(nameof(region));
-            if (string.IsNullOrWhiteSpace(region)) throw new ArgumentException("region is invalid", nameof(region));
-            if (credentialsProvider == null) throw new ArgumentNullException(nameof(credentialsProvider));
-            _region = region.ToLowerInvariant();
-            _credentialsProvider = credentialsProvider;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the AwsHttpConnection class with signer
+        /// </summary>
+        /// <param name="signer">The request signer.</param>
+        public AwsHttpConnection(ISigner signer)
+        {
+            _signer = signer ?? throw new ArgumentNullException(nameof(signer));
         }
 
 #if NET45
@@ -86,12 +85,7 @@ namespace Elasticsearch.Net.Aws
                     }
                 }
             }
-            var credentials = _credentialsProvider.GetCredentials();
-            if (credentials == null)
-            {
-                throw new Exception("Unable to retrieve credentials required to sign the request.");
-            }
-            SignV4Util.SignRequest(request, data, credentials, _region, "es");
+            _signer.SignRequest(request, data);
         }
     }
 }

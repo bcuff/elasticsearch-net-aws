@@ -18,13 +18,9 @@ namespace Elasticsearch.Net.Aws
 
         internal static void Sign(this ICredentialsProvider credentialsProvider, IRequest request, byte[] body)
         {
-            var credentials = credentialsProvider.GetCredentials();
-            if (credentials == null)
-            {
-                throw new Exception("Unable to retrieve credentials.");
-            }
             var regionService = ExtractRegionAndService(request.RequestUri);
-            SignV4Util.SignRequest(request, body, credentials, regionService.Item1, regionService.Item2);
+            var signer = new AwsV4Signer(regionService.Item1, regionService.Item2, credentialsProvider);
+            signer.SignRequest(request, body);
         }
 
         static readonly Regex _regionRegex = new Regex(@"\.([\w-]+)\.([\w-]+)\.amazonaws\.com$", RegexOptions.Compiled);

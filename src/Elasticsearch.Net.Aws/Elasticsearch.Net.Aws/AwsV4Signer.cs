@@ -10,25 +10,41 @@ using System.Text.RegularExpressions;
 
 namespace Elasticsearch.Net.Aws
 {
-    internal static class SignV4Util
+    /// <summary>
+    /// Implements Aws V4 signature
+    /// </summary>
+    public class AwsV4Signer : ISigner
     {
-        static readonly char[] _datePartSplitChars = { 'T' };
+        private readonly string _region;
+        private readonly string _service;
+        private readonly ICredentialsProvider _credentialsProvider;
+        private readonly char[] _datePartSplitChars = { 'T' };
+        private readonly byte[] _emptyBytes = new byte[0];
+        private readonly UTF8Encoding _encoding = new UTF8Encoding(false);
 
-        public static void SignRequest(IRequest request, byte[] body, AwsCredentials credentials, string region, string service)
+        public AwsV4Signer(string region, string service, ICredentialsProvider credentialsProvider)
+        {
+            _region = !String.IsNullOrWhiteSpace(region) ? region.ToLowerInvariant() : throw new ArgumentNullException(nameof(region));
+            _service = !String.IsNullOrWhiteSpace(service) ? service : throw new ArgumentNullException(nameof(service));
+            _credentialsProvider = credentialsProvider ?? throw new ArgumentNullException(nameof(credentialsProvider));
+        }
+
+        public void SignRequest(IRequest request, byte[] body)
         {
             var date = DateTime.UtcNow;
             var dateStamp = date.ToString("yyyyMMdd");
             var amzDate = date.ToString("yyyyMMddTHHmmssZ");
+            var credentials = _credentialsProvider.GetCredentials();
             request.Headers.XAmzDate = amzDate;
 
-            var signingKey = GetSigningKey(credentials.SecretKey, dateStamp, region, service);
-            var stringToSign = GetStringToSign(request, body, region, service);
+            var signingKey = GetSigningKey(credentials.SecretKey, dateStamp, _region, _service);
+            var stringToSign = GetStringToSign(request, body, _region, _service);
             Debug.Write("========== String to Sign ==========\r\n{0}\r\n========== String to Sign ==========\r\n", stringToSign);
-            var signature = signingKey.GetHmacSha256Hash(stringToSign).ToLowercaseHex();
+            var signature = signingKey.GetHmacSha256Hash(stringToSign, _encoding).ToLowercaseHex();
             var auth = string.Format(
                 "AWS4-HMAC-SHA256 Credential={0}/{1}, SignedHeaders={2}, Signature={3}",
                 credentials.AccessKey,
-                GetCredentialScope(dateStamp, region, service),
+                GetCredentialScope(dateStamp, _region, _service),
                 GetSignedHeaders(request),
                 signature);
 
@@ -37,25 +53,16 @@ namespace Elasticsearch.Net.Aws
                 request.Headers.XAmzSecurityToken = credentials.Token;
         }
 
-        public static byte[] GetSigningKey(string secretKey, string dateStamp, string region, string service)
+        private byte[] GetSigningKey(string secretKey, string dateStamp, string region, string service)
         {
             return _encoding.GetBytes("AWS4" + secretKey)
-                .GetHmacSha256Hash(dateStamp)
-                .GetHmacSha256Hash(region)
-                .GetHmacSha256Hash(service)
-                .GetHmacSha256Hash("aws4_request");
+                .GetHmacSha256Hash(dateStamp, _encoding)
+                .GetHmacSha256Hash(region, _encoding)
+                .GetHmacSha256Hash(service, _encoding)
+                .GetHmacSha256Hash("aws4_request", _encoding);
         }
 
-        private static byte[] GetHmacSha256Hash(this byte[] key, string data)
-        {
-            using (var kha = new HMACSHA256())
-            {
-                kha.Key = key;
-                return kha.ComputeHash(_encoding.GetBytes(data));
-            }
-        }
-
-        public static string GetStringToSign(IRequest request, byte[] data, string region, string service)
+        private string GetStringToSign(IRequest request, byte[] data, string region, string service)
         {
             var canonicalRequest = GetCanonicalRequest(request, data);
             Debug.Write("========== Canonical Request ==========\r\n{0}\r\n========== Canonical Request ==========\r\n", canonicalRequest);
@@ -70,12 +77,12 @@ namespace Elasticsearch.Net.Aws
             );
         }
 
-        private static string GetCredentialScope(string date, string region, string service)
+        private string GetCredentialScope(string date, string region, string service)
         {
             return string.Format("{0}/{1}/{2}/aws4_request", date, region, service);
         }
 
-        public static string GetCanonicalRequest(IRequest request, byte[] data)
+        private string GetCanonicalRequest(IRequest request, byte[] data)
         {
             var canonicalHeaders = request.GetCanonicalHeaders();
             var result = new StringBuilder();
@@ -93,7 +100,7 @@ namespace Elasticsearch.Net.Aws
             return result.ToString();
         }
 
-        private static string GetPath(Uri uri)
+        private string GetPath(Uri uri)
         {
             var path = uri.AbsolutePath;
             if (path.Length == 0) return "/";
@@ -110,7 +117,64 @@ namespace Elasticsearch.Net.Aws
             return string.Join("/", segments);
         }
 
-        private static Dictionary<string, string> GetCanonicalHeaders(this IRequest request)
+        private void WriteCanonicalHeaders(Dictionary<string, string> canonicalHeaders, StringBuilder output)
+        {
+            var q = from pair in canonicalHeaders
+                    orderby pair.Key ascending
+                    select string.Format("{0}:{1}\n", pair.Key, pair.Value);
+            foreach (var line in q)
+            {
+                output.Append(line);
+            }
+        }
+
+        private string GetSignedHeaders(IRequest request)
+        {
+            var canonicalHeaders = request.GetCanonicalHeaders();
+            var result = new StringBuilder();
+            WriteSignedHeaders(canonicalHeaders, result);
+            return result.ToString();
+        }
+
+        private void WriteSignedHeaders(Dictionary<string, string> canonicalHeaders, StringBuilder output)
+        {
+            bool started = false;
+            foreach (var pair in canonicalHeaders.OrderBy(v => v.Key))
+            {
+                if (started) output.Append(';');
+                output.Append(pair.Key.ToLowerInvariant());
+                started = true;
+            }
+        }
+
+        private void WriteRequestPayloadHash(byte[] data, StringBuilder output)
+        {
+            data = data ?? _emptyBytes;
+            var hash = data.GetHash();
+            foreach (var b in hash)
+            {
+                output.AppendFormat("{0:x2}", b);
+            }
+        }
+
+        private byte[] GetHash(string data)
+        {
+            return _encoding.GetBytes(data).GetHash();
+        }
+    }
+
+    public static class AwsV4SignerHelpers
+    {
+        public static byte[] GetHmacSha256Hash(this byte[] key, string data, Encoding encoding)
+        {
+            using (var kha = new HMACSHA256())
+            {
+                kha.Key = key;
+                return kha.ComputeHash(encoding.GetBytes(data));
+            }
+        }
+
+        public static Dictionary<string, string> GetCanonicalHeaders(this IRequest request)
         {
             var q = from string key in request.Headers.Keys
                     let headerName = key.ToLowerInvariant()
@@ -125,48 +189,6 @@ namespace Elasticsearch.Net.Aws
             return result;
         }
 
-        private static void WriteCanonicalHeaders(Dictionary<string, string> canonicalHeaders, StringBuilder output)
-        {
-            var q = from pair in canonicalHeaders
-                    orderby pair.Key ascending
-                    select string.Format("{0}:{1}\n", pair.Key, pair.Value);
-            foreach (var line in q)
-            {
-                output.Append(line);
-            }
-        }
-
-        private static string GetSignedHeaders(IRequest request)
-        {
-            var canonicalHeaders = request.GetCanonicalHeaders();
-            var result = new StringBuilder();
-            WriteSignedHeaders(canonicalHeaders, result);
-            return result.ToString();
-        }
-
-        private static void WriteSignedHeaders(Dictionary<string, string> canonicalHeaders, StringBuilder output)
-        {
-            bool started = false;
-            foreach (var pair in canonicalHeaders.OrderBy(v => v.Key))
-            {
-                if (started) output.Append(';');
-                output.Append(pair.Key.ToLowerInvariant());
-                started = true;
-            }
-        }
-
-#if NET45
-         private static NameValueCollection ParseQueryString(string query) =>
-            System.Web.HttpUtility.ParseQueryString(query);
-#else
-        private static NameValueCollection ParseQueryString(string query) =>
-            Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(query)
-                .Aggregate(new NameValueCollection(), (col, kv) =>
-                {
-                    kv.Value.ToList().ForEach(v => col.Add(kv.Key, v));
-                    return col;
-                });
-#endif
         public static string GetCanonicalQueryString(this Uri uri)
         {
             if (string.IsNullOrWhiteSpace(uri.Query)) return string.Empty;
@@ -187,7 +209,7 @@ namespace Elasticsearch.Net.Aws
             return output.ToString();
         }
 
-        private static void WriteEncoded(this StringBuilder output, string value)
+        public static void WriteEncoded(this StringBuilder output, string value)
         {
             for (var i = 0; i < value.Length; ++i)
             {
@@ -202,7 +224,7 @@ namespace Elasticsearch.Net.Aws
             }
         }
 
-        private static bool RequiresEncoding(this char value)
+        public static bool RequiresEncoding(this char value)
         {
             if ('A' <= value && value <= 'Z') return false;
             if ('a' <= value && value <= 'z') return false;
@@ -218,19 +240,7 @@ namespace Elasticsearch.Net.Aws
             return true;
         }
 
-        static readonly byte[] _emptyBytes = new byte[0];
-
-        private static void WriteRequestPayloadHash(byte[] data, StringBuilder output)
-        {
-            data = data ?? _emptyBytes;
-            var hash = GetHash(data);
-            foreach (var b in hash)
-            {
-                output.AppendFormat("{0:x2}", b);
-            }
-        }
-
-        private static string ToLowercaseHex(this byte[] data)
+        public static string ToLowercaseHex(this byte[] data)
         {
             var result = new StringBuilder();
             foreach (var b in data)
@@ -240,19 +250,25 @@ namespace Elasticsearch.Net.Aws
             return result.ToString();
         }
 
-        static readonly UTF8Encoding _encoding = new UTF8Encoding(false);
-
-        private static byte[] GetHash(string data)
-        {
-            return GetHash(_encoding.GetBytes(data));
-        }
-
-        private static byte[] GetHash(this byte[] data)
+        public static byte[] GetHash(this byte[] data)
         {
             using (var algo = SHA256.Create())
             {
                 return algo.ComputeHash(data);
             }
         }
+
+#if NET45
+        private static NameValueCollection ParseQueryString(string query) =>
+           System.Web.HttpUtility.ParseQueryString(query);
+#else
+        private static NameValueCollection ParseQueryString(string query) =>
+            Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(query)
+                .Aggregate(new NameValueCollection(), (col, kv) =>
+                {
+                    kv.Value.ToList().ForEach(v => col.Add(kv.Key, v));
+                    return col;
+                });
+#endif
     }
 }
