@@ -18,20 +18,22 @@ namespace Elasticsearch.Net.Aws
         private readonly string _region;
         private readonly string _service;
         private readonly ICredentialsProvider _credentialsProvider;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly char[] _datePartSplitChars = { 'T' };
         private readonly byte[] _emptyBytes = new byte[0];
         private readonly UTF8Encoding _encoding = new UTF8Encoding(false);
 
-        public AwsV4Signer(string region, string service, ICredentialsProvider credentialsProvider)
+        public AwsV4Signer(string region, string service, ICredentialsProvider credentialsProvider, IDateTimeProvider dateTimeProvider)
         {
             _region = !String.IsNullOrWhiteSpace(region) ? region.ToLowerInvariant() : throw new ArgumentNullException(nameof(region));
             _service = !String.IsNullOrWhiteSpace(service) ? service : throw new ArgumentNullException(nameof(service));
             _credentialsProvider = credentialsProvider ?? throw new ArgumentNullException(nameof(credentialsProvider));
+            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
         }
 
         public void SignRequest(IRequest request, byte[] body)
         {
-            var date = DateTime.UtcNow;
+            var date = _dateTimeProvider.Now();
             var dateStamp = date.ToString("yyyyMMdd");
             var amzDate = date.ToString("yyyyMMddTHHmmssZ");
             var credentials = _credentialsProvider.GetCredentials();

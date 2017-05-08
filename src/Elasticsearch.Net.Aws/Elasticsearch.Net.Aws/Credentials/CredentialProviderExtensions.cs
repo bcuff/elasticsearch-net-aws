@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Elasticsearch.Net;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -19,7 +20,7 @@ namespace Elasticsearch.Net.Aws
         internal static void Sign(this ICredentialsProvider credentialsProvider, IRequest request, byte[] body)
         {
             var regionService = ExtractRegionAndService(request.RequestUri);
-            var signer = new AwsV4Signer(regionService.Item1, regionService.Item2, credentialsProvider);
+            var signer = new AwsV4Signer(regionService.Item1, regionService.Item2, credentialsProvider, DateTimeProvider.Default);
             signer.SignRequest(request, body);
         }
 
