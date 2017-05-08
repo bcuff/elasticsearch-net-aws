@@ -23,6 +23,11 @@ namespace Elasticsearch.Net.Aws
         private readonly byte[] _emptyBytes = new byte[0];
         private readonly UTF8Encoding _encoding = new UTF8Encoding(false);
 
+        public AwsV4Signer(string region, string service, ICredentialsProvider credentialsProvider)
+            : this(region, service, credentialsProvider, DateTimeProvider.Default)
+        {
+        }
+
         public AwsV4Signer(string region, string service, ICredentialsProvider credentialsProvider, IDateTimeProvider dateTimeProvider)
         {
             _region = !String.IsNullOrWhiteSpace(region) ? region.ToLowerInvariant() : throw new ArgumentNullException(nameof(region));

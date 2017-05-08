@@ -43,7 +43,7 @@ namespace Elasticsearch.Net.Aws
         /// <param name="credentialsProvider">The credentials provider.</param>
         [Obsolete("Use AwsHttpConnection(ISigner signer)")]
         public AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)
-            : this(new AwsV4Signer(region, "es", credentialsProvider, DateTimeProvider.Default))
+            : this(new AwsV4Signer(region, "es", credentialsProvider))
         {
         }
 
