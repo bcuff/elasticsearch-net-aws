@@ -18,7 +18,7 @@ namespace Tests
         {
             var encoding = new UTF8Encoding(false);
             _sampleBody = encoding.GetBytes("Action=ListUsers&Version=2010-05-08");
-#if NETCOREAPP1_0
+#if NETCOREAPP1_1
             var request = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, "https://iam.amazonaws.com/");
             request.Content = new System.Net.Http.ByteArrayContent(_sampleBody);
             request.Content.Headers.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
