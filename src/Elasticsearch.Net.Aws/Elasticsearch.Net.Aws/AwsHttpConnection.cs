@@ -16,7 +16,7 @@ namespace Elasticsearch.Net.Aws
         /// Initializes a new instance of the AwsHttpConnection class with the specified AccessKey, SecretKey and Token.
         /// </summary>
         /// <param name="awsSettings">AWS specific settings required for signing requests.</param>
-        [Obsolete("Use AwsHttpConnection(ISigner signer)")]
+        [Obsolete("Use AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)")]
         public AwsHttpConnection(AwsSettings awsSettings)
             : this(
                   awsSettings.Region, 
@@ -29,7 +29,7 @@ namespace Elasticsearch.Net.Aws
         /// Initializes a new instance of the AwsHttpConnection class with credentials from the Instance Profile service
         /// </summary>
         /// <param name="region">AWS region</param>
-        [Obsolete("Use AwsHttpConnection(ISigner signer)")]
+        [Obsolete("Use AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)")]
         public AwsHttpConnection(string region)
             : this(region, CredentialChainProvider.Default)
         {
@@ -41,7 +41,6 @@ namespace Elasticsearch.Net.Aws
         /// </summary>
         /// <param name="region">AWS region</param>
         /// <param name="credentialsProvider">The credentials provider.</param>
-        [Obsolete("Use AwsHttpConnection(ISigner signer)")]
         public AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)
             : this(new AwsV4Signer(region, "es", credentialsProvider))
         {
