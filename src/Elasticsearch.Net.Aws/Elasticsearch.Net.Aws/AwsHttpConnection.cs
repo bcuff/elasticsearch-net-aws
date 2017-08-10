@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 
 namespace Elasticsearch.Net.Aws
@@ -102,3 +101,4 @@ namespace Elasticsearch.Net.Aws
         }
     }
 }
+
