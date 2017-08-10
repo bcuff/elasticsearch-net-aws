@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 
 namespace Elasticsearch.Net.Aws
@@ -12,6 +13,8 @@ namespace Elasticsearch.Net.Aws
         private readonly ICredentialsProvider _credentialsProvider;
         private readonly string _region;
 
+        public bool KeepAlive { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with the specified AccessKey, SecretKey and Token.
         /// </summary>
@@ -19,6 +22,7 @@ namespace Elasticsearch.Net.Aws
         [Obsolete("Use AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)")]
         public AwsHttpConnection(AwsSettings awsSettings)
         {
+            KeepAlive = false;
             if (awsSettings == null) throw new ArgumentNullException(nameof(awsSettings));
             if (string.IsNullOrWhiteSpace(awsSettings.Region)) throw new ArgumentException("awsSettings.Region is invalid.", nameof(awsSettings));
             _region = awsSettings.Region.ToLowerInvariant();
@@ -41,7 +45,6 @@ namespace Elasticsearch.Net.Aws
         {
         }
 
-
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with credentials from the Instance Profile service
         /// </summary>
@@ -60,6 +63,8 @@ namespace Elasticsearch.Net.Aws
         protected override System.Net.HttpWebRequest CreateHttpWebRequest(RequestData requestData)
         {
             var request = base.CreateHttpWebRequest(requestData);
+            request.Headers.Remove("Connection");
+            request.Headers.Add("Connection", KeepAlive ? "Keep-Alive" : "close");
             SignRequest(new HttpWebRequestAdapter(request), requestData);
             return request;
         }
@@ -67,6 +72,8 @@ namespace Elasticsearch.Net.Aws
         protected override HttpRequestMessage CreateHttpRequestMessage(RequestData requestData)
         {
             var request = base.CreateHttpRequestMessage(requestData);
+            request.Headers.Remove("Connection");
+            request.Headers.Add("Connection", KeepAlive ? "Keep-Alive" : "close");
             SignRequest(new HttpRequestMessageAdapter(request), requestData);
             return request;
         }
