@@ -117,6 +117,7 @@ namespace Elasticsearch.Net.Aws
                     let headerValues = string.Join(",",
                         request.Headers
                         .GetValues(key) ?? Enumerable.Empty<string>()
+                        .Where(h => !h.Equals("Connection", StringComparison.OrdinalIgnoreCase))
                         .Select(v => v.Trimall())
                     )
                     select new { headerName, headerValues };
