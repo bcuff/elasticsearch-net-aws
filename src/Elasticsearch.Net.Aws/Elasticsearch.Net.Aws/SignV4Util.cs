@@ -114,10 +114,10 @@ namespace Elasticsearch.Net.Aws
         {
             var q = from string key in request.Headers.Keys
                     let headerName = key.ToLowerInvariant()
+                    where headerName != "connection"
                     let headerValues = string.Join(",",
                         request.Headers
                         .GetValues(key) ?? Enumerable.Empty<string>()
-                        .Where(h => !h.Equals("Connection", StringComparison.OrdinalIgnoreCase))
                         .Select(v => v.Trimall())
                     )
                     select new { headerName, headerValues };

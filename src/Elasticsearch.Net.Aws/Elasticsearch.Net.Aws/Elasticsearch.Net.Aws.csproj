@@ -18,9 +18,9 @@
     <PackageReleaseNotes>Fixed signing bug with Connection header</PackageReleaseNotes>
     <PackageTags>elasticsearch elastic search aws amazon</PackageTags>
     <RepositoryUrl>https://github.com/bcuff/elasticsearch-net-aws</RepositoryUrl>
-    <AssemblyVersion>2.3.5.0</AssemblyVersion>
-    <FileVersion>2.3.5.0</FileVersion>
-    <Version>2.3.5</Version>
+    <AssemblyVersion>2.3.6.0</AssemblyVersion>
+    <FileVersion>2.3.6.0</FileVersion>
+    <Version>2.3.6</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
