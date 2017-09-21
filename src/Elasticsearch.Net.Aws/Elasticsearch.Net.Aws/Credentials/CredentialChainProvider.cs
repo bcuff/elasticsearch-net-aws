@@ -12,6 +12,7 @@ namespace Elasticsearch.Net.Aws
             new AppConfigCredentialProvider(),
 #endif
             new EnvironmentVariableCredentialsProvider(),
+            new DefaultProfileCredentialProvider(),
             new InstanceProfileCredentialProvider()
         );
 
