@@ -52,3 +52,20 @@ var client = new ElasticClient(settings, connection: new AwsHttpConnection(setti
 ```
 
 The `AwsHttpConnection` class is an implemenation of `IConnection` that will sign the HTTP requests according to the [Version 4 Signing Process](http://docs.aws.amazon.com/general/latest/gr/signature-version-4.html).
+
+#### Serilog Sink Setup
+
+```csharp
+  const string esUrl = "https://aws-es-thinger.us-west-1.es.amazonaws.com";
+  Log.Logger = new LoggerConfiguration()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(esUrl))
+                {
+                    ModifyConnectionSettings = conn =>
+                    {
+                        var httpConnection = new AwsHttpConnection("us-east-1");
+                        var pool = new SingleNodeConnectionPool(new Uri(esUrl));
+                        return new ConnectionConfiguration(pool, httpConnection);
+                    }
+                })
+                .CreateLogger();
+```
