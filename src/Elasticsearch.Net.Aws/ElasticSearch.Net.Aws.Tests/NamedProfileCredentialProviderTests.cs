@@ -4,13 +4,13 @@ using NUnit.Framework;
 namespace ElasticSearch.Net.Aws.Tests
 {
     [TestFixture]
-    public class DefaultProfileCredentialProviderTests
+    public class NamedProfileCredentialProviderTests
     {
         [TestCase]
         [Ignore("Requires setting up an aws profile with the expected values")]
         public void GetCredentials_should_return_expected_values()
         {
-            var credentialProvider = new DefaultProfileCredentialProvider();
+            var credentialProvider = new NamedProfileCredentialProvider();
             var credentials = credentialProvider.GetCredentials();
 
             Assert.NotNull(credentials);
