@@ -15,12 +15,12 @@
     <Copyright>Copyright 2015</Copyright>
     <PackageLicenseUrl>https://raw.githubusercontent.com/bcuff/elasticsearch-net-aws/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/bcuff/elasticsearch-net-aws</PackageProjectUrl>
-    <PackageReleaseNotes>Added credential provider to look in AWS profile</PackageReleaseNotes>
+    <PackageReleaseNotes>Support for named instance profiles</PackageReleaseNotes>
     <PackageTags>elasticsearch elastic search aws amazon</PackageTags>
     <RepositoryUrl>https://github.com/bcuff/elasticsearch-net-aws</RepositoryUrl>
-    <AssemblyVersion>2.3.7.0</AssemblyVersion>
-    <FileVersion>2.3.7.0</FileVersion>
-    <Version>2.3.7</Version>
+    <AssemblyVersion>2.4.0.0</AssemblyVersion>
+    <FileVersion>2.4.0.0</FileVersion>
+    <Version>2.4.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
