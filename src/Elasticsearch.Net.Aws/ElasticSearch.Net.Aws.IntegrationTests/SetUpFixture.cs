@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using Amazon;
+using Amazon.Runtime;
 using Newtonsoft.Json;
-using Elasticsearch.Net.Aws;
 using NUnit.Framework;
 
 namespace IntegrationTests
@@ -15,13 +17,9 @@ namespace IntegrationTests
             var json = File.ReadAllText("TargetConfig.json").Trim();
             var config = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
-            TestConfig.Endpoint = config["endpoint"];
-            TestConfig.AwsSettings = new AwsSettings
-            {
-                AccessKey = config["accessKey"],
-                SecretKey = config["secretKey"],
-                Region = config["region"],
-            };
+            TestConfig.Endpoint = new Uri(config["endpoint"]);
+            TestConfig.Region = config["secretKey"];
+            TestConfig.Credentials = new BasicAWSCredentials(config["accessKey"], config["secretKey"]).GetCredentials();
         }
     }
 }

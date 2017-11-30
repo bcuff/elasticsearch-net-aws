@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Elasticsearch.Net.Aws;
+﻿using Elasticsearch.Net.Aws;
 using NUnit.Framework;
 
 namespace Tests

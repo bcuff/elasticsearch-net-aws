@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Elasticsearch.Net.Aws;
+using Amazon;
+using Amazon.Runtime;
 
 namespace IntegrationTests
 {
     public static class TestConfig
     {
-        public static string Endpoint { get; set; }
-        public static AwsSettings AwsSettings { get; set; }
+        public static Uri Endpoint { get; set; }
+
+        public static string Region { get; set; }
+
+        public static ImmutableCredentials Credentials { get; set; }
     }
 }

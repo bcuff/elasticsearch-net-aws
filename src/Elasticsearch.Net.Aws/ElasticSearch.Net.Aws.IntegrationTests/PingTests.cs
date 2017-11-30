@@ -1,24 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Amazon;
+using Amazon.Runtime;
 using Elasticsearch.Net;
 using Elasticsearch.Net.Aws;
 using NUnit.Framework;
 
 namespace IntegrationTests
 {
-    using System.IO;
-
     [TestFixture]
     public class PingTests
     {
-        private static string Region => TestConfig.AwsSettings.Region;
-        private static ICredentialsProvider Credentials => new StaticCredentialsProvider(TestConfig.AwsSettings);
+        private static string Region => TestConfig.Region;
+        private static ImmutableCredentials Credentials => TestConfig.Credentials;
+
         [Test]
         public void Ping_should_work()
         {
             var httpConnection = new AwsHttpConnection(Region, Credentials);
-            var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
+            var pool = new SingleNodeConnectionPool(TestConfig.Endpoint);
             var config = new ConnectionConfiguration(pool, httpConnection);
             var client = new ElasticLowLevelClient(config);
             var response = client.Ping<object>();
@@ -30,7 +31,7 @@ namespace IntegrationTests
         public void NestPing_should_work()
         {
             var httpConnection = new AwsHttpConnection(Region, Credentials);
-            var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
+            var pool = new SingleNodeConnectionPool(TestConfig.Endpoint);
             var config = new Nest.ConnectionSettings(pool, httpConnection);
             var client = new Nest.ElasticClient(config);
             var response = client.Ping();
@@ -42,7 +43,7 @@ namespace IntegrationTests
         {
             var randomString = Guid.NewGuid().ToString("N");
             var httpConnection = new AwsHttpConnection(Region, Credentials);
-            var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
+            var pool = new SingleNodeConnectionPool(TestConfig.Endpoint);
             var config = new ConnectionConfiguration(pool, httpConnection);
             var client = new ElasticLowLevelClient(config);
             var response = client.Get<Stream>(randomString, string.Join(",", Enumerable.Repeat(randomString, 2)), randomString);
@@ -53,7 +54,7 @@ namespace IntegrationTests
         public void Asterisk_encoded_url_should_work()
         {
             var httpConnection = new AwsHttpConnection(Region, Credentials);
-            var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
+            var pool = new SingleNodeConnectionPool(TestConfig.Endpoint);
             var config = new ConnectionConfiguration(pool, httpConnection);
             var client = new ElasticLowLevelClient(config);
             var response = client.Get<Stream>("index*", "type", "id");

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using Amazon.Runtime;
 using Elasticsearch.Net.Aws;
 using NUnit.Framework;
 
@@ -79,13 +80,8 @@ namespace Tests
         [Test]
         public void SignRequest_should_apply_signature_to_request()
         {
-            var creds = new AwsCredentials
-            {
-                AccessKey = "ExampleKey",
-                SecretKey =  "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY",
-                Token = "token1",
-            };
-            SignV4Util.SignRequest(_sampleRequest, _sampleBody, creds, "us-east-1", "iam");
+            var creds = new SessionAWSCredentials("ExampleKey", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", "token1");
+            SignV4Util.SignRequest(_sampleRequest, _sampleBody, creds.GetCredentials(), "us-east-1", "iam");
 
             var amzDate = _sampleRequest.Headers.XAmzDate;
             Assert.False(String.IsNullOrEmpty(amzDate));
