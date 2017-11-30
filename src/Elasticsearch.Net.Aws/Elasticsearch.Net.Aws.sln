@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elasticsearch.Net.Aws", "Elasticsearch.Net.Aws\Elasticsearch.Net.Aws.csproj", "{0DE39CEC-A00F-409A-9D45-AAFA31C77ED9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticSearch.Net.Aws.Tests", "ElasticSearch.Net.Aws.Tests\ElasticSearch.Net.Aws.Tests.csproj", "{CFFD4A71-F57A-458B-87B8-E6513D6B0C72}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticSearch.Net.Aws.IntegrationTests", "ElasticSearch.Net.Aws.IntegrationTests\ElasticSearch.Net.Aws.IntegrationTests.csproj", "{91470D9E-D497-4FF7-A22C-3825D3CE0074}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest5Test", "Nest5Test\Nest5Test.csproj", "{A7CC8B86-CAF9-4BD6-98F4-84987411677C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,8 +27,15 @@ Global
 		{91470D9E-D497-4FF7-A22C-3825D3CE0074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{91470D9E-D497-4FF7-A22C-3825D3CE0074}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91470D9E-D497-4FF7-A22C-3825D3CE0074}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7CC8B86-CAF9-4BD6-98F4-84987411677C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7CC8B86-CAF9-4BD6-98F4-84987411677C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7CC8B86-CAF9-4BD6-98F4-84987411677C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7CC8B86-CAF9-4BD6-98F4-84987411677C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D324722-47B4-48FA-BC81-5E982410896F}
 	EndGlobalSection
 EndGlobal
