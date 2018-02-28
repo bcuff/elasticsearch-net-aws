@@ -21,7 +21,7 @@ namespace IntegrationTests
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new ConnectionConfiguration(pool, httpConnection);
             var client = new ElasticLowLevelClient(config);
-            var response = client.Ping<object>();
+            var response = client.Ping<VoidResponse>();
             Assert.AreEqual(200, response.HttpStatusCode.GetValueOrDefault(-1));
 
         }
@@ -45,7 +45,7 @@ namespace IntegrationTests
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new ConnectionConfiguration(pool, httpConnection);
             var client = new ElasticLowLevelClient(config);
-            var response = client.Get<Stream>(randomString, string.Join(",", Enumerable.Repeat(randomString, 2)), randomString);
+            var response = client.Get<BytesResponse>(randomString, string.Join(",", Enumerable.Repeat(randomString, 2)), randomString);
             Assert.AreEqual(404, response.HttpStatusCode.GetValueOrDefault(-1));
         }
 
@@ -56,7 +56,7 @@ namespace IntegrationTests
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new ConnectionConfiguration(pool, httpConnection);
             var client = new ElasticLowLevelClient(config);
-            var response = client.Get<Stream>("index*", "type", "id");
+            var response = client.Get<BytesResponse>("index*", "type", "id");
             Assert.AreEqual(404, response.HttpStatusCode.GetValueOrDefault(-1));
         }
     }
