@@ -4,9 +4,9 @@ Add-on to [elasticsearch-net / NEST](https://github.com/elastic/elasticsearch-ne
 
 ## Install Package
 On Nuget
-* Current Version - https://www.nuget.org/packages/Elasticsearch.Net.Aws/
-* For NEST / Elasticsearch.Net 2.X - https://www.nuget.org/packages/bcuff.Elasticsearch.Net.Aws-v2/
-* For NEST / Elasticsearch.Net 1.X - https://www.nuget.org/packages/Elasticsearch.Net.Aws-v1/
+* [Current Version](https://www.nuget.org/packages/Elasticsearch.Net.Aws/)
+* [NEST / Elasticsearch.Net 2.X](https://www.nuget.org/packages/bcuff.Elasticsearch.Net.Aws-v2/)
+* [NEST / Elasticsearch.Net 1.X](https://www.nuget.org/packages/Elasticsearch.Net.Aws-v1/)
 
 ```PowerShell
 # For ElasticSearch.Net >= 5.0.0
