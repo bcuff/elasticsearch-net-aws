@@ -29,11 +29,7 @@ dotnet add package Elasticsearch.Net.Aws-v1
 // for NEST
 
 // if using an access key
-var httpConnection = new AwsHttpConnection("us-east-1", new StaticCredentialsProvider(new AwsCredentials
-{
-	AccessKey = "My AWS access key",
-	SecretKey = "My AWS secret key",
-}));
+var httpConnection = new AwsHttpConnection("us-east-1");
 
 // if using app.config, environment variables, or roles
 var httpConnection = new AwsHttpConnection("us-east-1");
