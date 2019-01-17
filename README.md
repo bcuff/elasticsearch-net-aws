@@ -8,10 +8,15 @@ On Nuget
 * For NEST / Elasticsearch.Net 1.X - https://www.nuget.org/packages/Elasticsearch.Net.Aws-v1/
 
 ```PowerShell
-# For ElasticSearch.Net >= 2.0.2
+# For ElasticSearch.Net >= 5.0.0
 Install-Package Elasticsearch.Net.Aws
 # or for dotnet core
 dotnet add package Elasticsearch.Net.Aws
+
+# For ElasticSearch.Net 2.X
+Install-Package Elasticsearch.Net.Aws-v2
+# or for dotnet core
+dotnet add package Elasticsearch.Net.Aws-v2
 
 # For ElasticSearch.Net 1.X
 Install-Package Elasticsearch.Net.Aws-v1
