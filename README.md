@@ -14,9 +14,9 @@ Install-Package Elasticsearch.Net.Aws
 dotnet add package Elasticsearch.Net.Aws
 
 # For ElasticSearch.Net 2.X
-Install-Package Elasticsearch.Net.Aws-v2
+Install-Package bcuff.Elasticsearch.Net.Aws-v2
 # or for dotnet core
-dotnet add package Elasticsearch.Net.Aws-v2
+dotnet add package bcuff.Elasticsearch.Net.Aws-v2
 
 # For ElasticSearch.Net 1.X
 Install-Package Elasticsearch.Net.Aws-v1
