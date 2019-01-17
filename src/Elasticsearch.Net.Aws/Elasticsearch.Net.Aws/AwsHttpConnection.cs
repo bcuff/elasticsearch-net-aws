@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using Amazon;
+using Amazon.Runtime;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -9,27 +11,18 @@ namespace Elasticsearch.Net.Aws
     /// </summary>
     public class AwsHttpConnection : HttpConnection
     {
-        private readonly ICredentialsProvider _credentialsProvider;
-        private readonly string _region;
+        private readonly AWSCredentials _credentials;
+        private readonly RegionEndpoint _region;
 
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with the specified AccessKey, SecretKey and Token.
         /// </summary>
-        /// <param name="awsSettings">AWS specific settings required for signing requests.</param>
-        [Obsolete("Use AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)")]
-        public AwsHttpConnection(AwsSettings awsSettings)
+        /// <param name="credentials">The AWS credentials.</param>
+        /// <param name="region">The AWS region to connect to.</param>
+        public AwsHttpConnection(AWSCredentials credentials, RegionEndpoint region)
         {
-            if (awsSettings == null) throw new ArgumentNullException(nameof(awsSettings));
-            if (string.IsNullOrWhiteSpace(awsSettings.Region)) throw new ArgumentException("awsSettings.Region is invalid.", nameof(awsSettings));
-            _region = awsSettings.Region.ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(awsSettings.AccessKey) && !string.IsNullOrWhiteSpace(awsSettings.SecretKey))
-            {
-                _credentialsProvider = new StaticCredentialsProvider(awsSettings);
-            }
-            else
-            {
-                _credentialsProvider = CredentialChainProvider.Default;
-            }
+            _credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
+            _region = region ?? throw new ArgumentNullException(nameof(region));
         }
 
         /// <summary>
@@ -37,26 +30,20 @@ namespace Elasticsearch.Net.Aws
         /// </summary>
         /// <param name="region">AWS region</param>
         public AwsHttpConnection(string region)
-            : this(region, CredentialChainProvider.Default)
+            : this(FallbackCredentialsFactory.GetCredentials(), RegionEndpoint.GetBySystemName(region))
         {
         }
-
 
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with credentials from the Instance Profile service
         /// </summary>
-        /// <param name="region">AWS region</param>
-        /// <param name="credentialsProvider">The credentials provider.</param>
-        public AwsHttpConnection(string region, ICredentialsProvider credentialsProvider)
+        public AwsHttpConnection() : this(
+            FallbackCredentialsFactory.GetCredentials(),
+            FallbackRegionFactory.GetRegionEndpoint() ?? throw new Exception("Unable to determine the correct AWS region. Please try providing it explicitly."))
         {
-            if (region == null) throw new ArgumentNullException(nameof(region));
-            if (string.IsNullOrWhiteSpace(region)) throw new ArgumentException("region is invalid", nameof(region));
-            if (credentialsProvider == null) throw new ArgumentNullException(nameof(credentialsProvider));
-            _region = region.ToLowerInvariant();
-            _credentialsProvider = credentialsProvider;
         }
 
-#if NET45
+#if !NETSTANDARD
         protected override System.Net.HttpWebRequest CreateHttpWebRequest(RequestData requestData)
         {
             var request = base.CreateHttpWebRequest(requestData);
@@ -71,6 +58,7 @@ namespace Elasticsearch.Net.Aws
             return request;
         }
 #endif
+
         private void SignRequest(IRequest request, RequestData requestData)
         {
             byte[] data = null;
@@ -86,12 +74,12 @@ namespace Elasticsearch.Net.Aws
                     }
                 }
             }
-            var credentials = _credentialsProvider.GetCredentials();
+            var credentials = _credentials.GetCredentials();
             if (credentials == null)
             {
                 throw new Exception("Unable to retrieve credentials required to sign the request.");
             }
-            SignV4Util.SignRequest(request, data, credentials, _region, "es");
+            SignV4Util.SignRequest(request, data, credentials, _region.SystemName, "es");
         }
     }
 }

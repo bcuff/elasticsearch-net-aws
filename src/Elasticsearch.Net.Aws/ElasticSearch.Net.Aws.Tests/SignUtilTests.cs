@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using Amazon.Runtime;
 using Elasticsearch.Net.Aws;
 using NUnit.Framework;
 
@@ -17,13 +18,13 @@ namespace Tests
         {
             var encoding = new UTF8Encoding(false);
             _sampleBody = encoding.GetBytes("Action=ListUsers&Version=2010-05-08");
-#if NETCOREAPP1_0
+#if NETCOREAPP
             var request = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, "https://iam.amazonaws.com/");
             request.Content = new System.Net.Http.ByteArrayContent(_sampleBody);
             request.Content.Headers.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
             request.Headers.TryAddWithoutValidation("X-Amz-Date", "20110909T233600Z");
             _sampleRequest = new HttpRequestMessageAdapter(request);
-#elif NET451
+#elif NET461
             var request = System.Net.WebRequest.CreateHttp("https://iam.amazonaws.com/");
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
@@ -79,12 +80,8 @@ namespace Tests
         [Test]
         public void SignRequest_should_apply_signature_to_request()
         {
-            var creds = new AwsCredentials
-            {
-                AccessKey = "ExampleKey",
-                SecretKey =  "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY",
-                Token = "token1",
-            };
+            var creds = new SessionAWSCredentials("ExampleKey", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", "token1")
+                .GetCredentials();
             SignV4Util.SignRequest(_sampleRequest, _sampleBody, creds, "us-east-1", "iam");
 
             var amzDate = _sampleRequest.Headers.XAmzDate;

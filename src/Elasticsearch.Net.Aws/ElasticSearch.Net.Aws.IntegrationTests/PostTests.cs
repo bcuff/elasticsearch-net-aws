@@ -11,8 +11,7 @@ namespace IntegrationTests
     [TestFixture]
     public class PostTests
     {
-        private static string Region => TestConfig.AwsSettings.Region;
-        private static ICredentialsProvider Credentials => new StaticCredentialsProvider(TestConfig.AwsSettings);
+        private static string Region => TestConfig.Region;
 
         string _indexName;
         ElasticLowLevelClient _client;
@@ -20,7 +19,7 @@ namespace IntegrationTests
         [SetUp]
         public void Setup()
         {
-            var httpConnection = new AwsHttpConnection(Region, Credentials);
+            var httpConnection = new AwsHttpConnection(Region);
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new ConnectionConfiguration(pool, httpConnection);
             _client = new ElasticLowLevelClient(config);

@@ -12,12 +12,11 @@ namespace IntegrationTests
     [TestFixture]
     public class PingTests
     {
-        private static string Region => TestConfig.AwsSettings.Region;
-        private static ICredentialsProvider Credentials => new StaticCredentialsProvider(TestConfig.AwsSettings);
+        private static string Region => TestConfig.Region;
         [Test]
         public void Ping_should_work()
         {
-            var httpConnection = new AwsHttpConnection(Region, Credentials);
+            var httpConnection = new AwsHttpConnection(Region);
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new ConnectionConfiguration(pool, httpConnection);
             var client = new ElasticLowLevelClient(config);
@@ -29,7 +28,7 @@ namespace IntegrationTests
         [Test]
         public void NestPing_should_work()
         {
-            var httpConnection = new AwsHttpConnection(Region, Credentials);
+            var httpConnection = new AwsHttpConnection(Region);
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new Nest.ConnectionSettings(pool, httpConnection);
             var client = new Nest.ElasticClient(config);
@@ -41,7 +40,7 @@ namespace IntegrationTests
         public void Random_encoded_url_should_work()
         {
             var randomString = Guid.NewGuid().ToString("N");
-            var httpConnection = new AwsHttpConnection(Region, Credentials);
+            var httpConnection = new AwsHttpConnection(Region);
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new ConnectionConfiguration(pool, httpConnection);
             var client = new ElasticLowLevelClient(config);
@@ -52,7 +51,7 @@ namespace IntegrationTests
         [Test]
         public void Asterisk_encoded_url_should_work()
         {
-            var httpConnection = new AwsHttpConnection(Region, Credentials);
+            var httpConnection = new AwsHttpConnection(Region);
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new ConnectionConfiguration(pool, httpConnection);
             var client = new ElasticLowLevelClient(config);

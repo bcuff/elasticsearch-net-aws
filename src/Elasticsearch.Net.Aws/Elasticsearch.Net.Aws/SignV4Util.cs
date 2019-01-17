@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Amazon.Runtime;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -14,7 +15,7 @@ namespace Elasticsearch.Net.Aws
     {
         static readonly char[] _datePartSplitChars = { 'T' };
 
-        public static void SignRequest(IRequest request, byte[] body, AwsCredentials credentials, string region, string service)
+        public static void SignRequest(IRequest request, byte[] body, ImmutableCredentials credentials, string region, string service)
         {
             var date = DateTime.UtcNow;
             var dateStamp = date.ToString("yyyyMMdd");
@@ -156,7 +157,7 @@ namespace Elasticsearch.Net.Aws
             }
         }
 
-#if NET45
+#if !NETSTANDARD
          private static NameValueCollection ParseQueryString(string query) =>
             System.Web.HttpUtility.ParseQueryString(query);
 #else
