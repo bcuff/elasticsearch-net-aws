@@ -35,6 +35,8 @@ dotnet add package Elasticsearch.Net.Aws-v1
 // for NEST
 
 // if using app.config, environment variables, or roles
+// This constructor will look up AWS credentials in the
+// same way that the AWSSDK does automatically.
 var httpConnection = new AwsHttpConnection("us-east-1");
 
 var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
