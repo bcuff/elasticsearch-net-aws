@@ -18,7 +18,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.*" />
     <PackageReference Include="NUnit" Version="3.7.*" />
     <PackageReference Include="NEST" Version="6.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
   </ItemGroup>
 
