@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>6.1.0</VersionPrefix>
+    <VersionPrefix>7.0.0</VersionPrefix>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <AssemblyName>Elasticsearch.Net.Aws</AssemblyName>
     <PackageId>Elasticsearch.Net.Aws</PackageId>
@@ -14,9 +14,9 @@
     <PackageReleaseNotes>Use AWSSDK.Core to get credentials instead of custom code.</PackageReleaseNotes>
     <PackageTags>elasticsearch elastic search aws amazon</PackageTags>
     <RepositoryUrl>https://github.com/bcuff/elasticsearch-net-aws</RepositoryUrl>
-    <AssemblyVersion>6.1.0</AssemblyVersion>
-    <FileVersion>6.1.0</FileVersion>
-    <Version>6.1.0</Version>
+    <AssemblyVersion>7.0.0</AssemblyVersion>
+    <FileVersion>7.0.0</FileVersion>
+    <Version>7.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
