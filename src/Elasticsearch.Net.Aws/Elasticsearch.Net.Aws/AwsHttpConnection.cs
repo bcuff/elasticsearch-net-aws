@@ -65,7 +65,16 @@ namespace Elasticsearch.Net.Aws
                     }
                 }
             }
-            var credentials = _credentials.GetCredentials();
+            ImmutableCredentials credentials;
+            try
+            {
+                credentials = _credentials.GetCredentials();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Unable to retrieve credentials required to sign the request.", e);
+            }
+
             if (credentials == null)
             {
                 throw new Exception("Unable to retrieve credentials required to sign the request.");

@@ -22,6 +22,7 @@ namespace IntegrationTests
             var httpConnection = new AwsHttpConnection(Region);
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new ConnectionConfiguration(pool, httpConnection);
+            config.DisableDirectStreaming();
             _client = new ElasticLowLevelClient(config);
             _indexName = $"unittest_{Guid.NewGuid().ToString("n")}";
         }
@@ -37,9 +38,9 @@ namespace IntegrationTests
         {
             var id = Guid.NewGuid().ToString("n");
             var response = _client.Create<VoidResponse>(_indexName, id, PostData.Serializable(new { message = "Hello, World!" }));
-            Assert.AreEqual(true, response.Success);
+            Assert.AreEqual(true, response.Success, response.DebugInformation);
             var getResponse = _client.Get<StringResponse>(_indexName, id);
-            Assert.AreEqual(true, getResponse.Success);
+            Assert.AreEqual(true, getResponse.Success, getResponse.DebugInformation);
             StringAssert.Contains("Hello, World!", getResponse.Body);
         }
     }
