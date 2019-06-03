@@ -43,21 +43,12 @@ namespace Elasticsearch.Net.Aws
         {
         }
 
-#if !NETSTANDARD
-        protected override System.Net.HttpWebRequest CreateHttpWebRequest(RequestData requestData)
-        {
-            var request = base.CreateHttpWebRequest(requestData);
-            SignRequest(new HttpWebRequestAdapter(request), requestData);
-            return request;
-        }
-#else
         protected override HttpRequestMessage CreateHttpRequestMessage(RequestData requestData)
         {
             var request = base.CreateHttpRequestMessage(requestData);
             SignRequest(new HttpRequestMessageAdapter(request), requestData);
             return request;
         }
-#endif
 
         private void SignRequest(IRequest request, RequestData requestData)
         {

@@ -157,10 +157,7 @@ namespace Elasticsearch.Net.Aws
             }
         }
 
-#if !NETSTANDARD
-         private static NameValueCollection ParseQueryString(string query) =>
-            System.Web.HttpUtility.ParseQueryString(query);
-#else
+
         private static NameValueCollection ParseQueryString(string query) =>
             Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(query)
                 .Aggregate(new NameValueCollection(), (col, kv) =>
@@ -168,7 +165,7 @@ namespace Elasticsearch.Net.Aws
                     kv.Value.ToList().ForEach(v => col.Add(kv.Key, v));
                     return col;
                 });
-#endif
+
         public static string GetCanonicalQueryString(this Uri uri)
         {
             if (string.IsNullOrWhiteSpace(uri.Query)) return string.Empty;
