@@ -36,9 +36,9 @@ namespace IntegrationTests
         public void SimplePost_should_work()
         {
             var id = Guid.NewGuid().ToString("n");
-            var response = _client.Create<VoidResponse>(_indexName, "test", id, PostData.Serializable(new { message = "Hello, World!" }));
+            var response = _client.Create<VoidResponse>(_indexName, id, PostData.Serializable(new { message = "Hello, World!" }));
             Assert.AreEqual(true, response.Success);
-            var getResponse = _client.Get<StringResponse>(_indexName, "test", id);
+            var getResponse = _client.Get<StringResponse>(_indexName, id);
             Assert.AreEqual(true, getResponse.Success);
             StringAssert.Contains("Hello, World!", getResponse.Body);
         }

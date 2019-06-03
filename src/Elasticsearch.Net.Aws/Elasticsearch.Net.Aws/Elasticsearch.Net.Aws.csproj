@@ -26,9 +26,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.3.17.9" />
-    <PackageReference Include="Elasticsearch.Net" Version="6.*" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="1.1.2" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.*" />
+    <PackageReference Include="Elasticsearch.Net" Version="7.0.0-alpha2" />
   </ItemGroup>
 
 </Project>
