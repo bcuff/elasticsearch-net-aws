@@ -19,6 +19,7 @@ namespace IntegrationTests
             var httpConnection = new AwsHttpConnection(Region);
             var pool = new SingleNodeConnectionPool(new Uri(TestConfig.Endpoint));
             var config = new ConnectionConfiguration(pool, httpConnection);
+            config.DisableDirectStreaming();
             var client = new ElasticLowLevelClient(config);
             var response = client.Ping<VoidResponse>();
             Assert.AreEqual(200, response.HttpStatusCode.GetValueOrDefault(-1));

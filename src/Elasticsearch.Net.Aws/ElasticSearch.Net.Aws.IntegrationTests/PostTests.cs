@@ -30,14 +30,17 @@ namespace IntegrationTests
         [TearDown]
         public void TearDown()
         {
-            _client.IndicesDelete<VoidResponse>(_indexName);
+            _client.Indices.Delete<VoidResponse>(_indexName);
         }
 
         [Test]
         public void SimplePost_should_work()
         {
             var id = Guid.NewGuid().ToString("n");
-            var response = _client.Create<VoidResponse>(_indexName, id, PostData.Serializable(new { message = "Hello, World!" }));
+            var response = _client.Create<VoidResponse>(
+                _indexName,
+                id,
+                PostData.Serializable(new { message = "Hello, World!" }));
             Assert.AreEqual(true, response.Success, response.DebugInformation);
             var getResponse = _client.Get<StringResponse>(_indexName, id);
             Assert.AreEqual(true, getResponse.Success, getResponse.DebugInformation);
