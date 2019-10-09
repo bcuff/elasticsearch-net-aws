@@ -1,4 +1,4 @@
 ﻿{
-  "endpoint": "https://search-dice-preview-logging-k4u5ga2hk4tk5muztuduyi7tea.us-east-1.es.amazonaws.com",
-  "region": "us-east-1"
+	"endpoint": "<your aws elasticsearch service endpoint>",
+	"region": "us-east-1"
 }
