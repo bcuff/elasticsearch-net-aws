@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
     <AssemblyName>ElasticSearch.Net.Aws.IntegrationTests</AssemblyName>
     <PackageId>ElasticSearch.Net.Aws.IntegrationTests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
@@ -17,8 +17,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.*" />
     <PackageReference Include="NUnit" Version="3.7.*" />
-    <PackageReference Include="NEST" Version="7.0.0-beta1" />
+    <PackageReference Include="NEST" Version="7.0.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
   <ItemGroup>

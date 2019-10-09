@@ -203,3 +203,5 @@ FakesAssemblies/
 
 # snk key file
 *.snk
+
+.ionide/

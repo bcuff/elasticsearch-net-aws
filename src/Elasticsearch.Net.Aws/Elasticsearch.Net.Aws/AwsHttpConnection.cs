@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using Amazon;
 using Amazon.Runtime;
@@ -43,12 +44,42 @@ namespace Elasticsearch.Net.Aws
         {
         }
 
+#if NETSTANDARD
         protected override HttpRequestMessage CreateHttpRequestMessage(RequestData requestData)
         {
             var request = base.CreateHttpRequestMessage(requestData);
             SignRequest(new HttpRequestMessageAdapter(request), requestData);
             return request;
         }
+#else
+        static int _createHttpRequestDepth;
+
+        HttpWebRequest CreateWebRequestInternal(RequestData requestData, Func<RequestData, HttpWebRequest> creator)
+        {
+            _createHttpRequestDepth++;
+            HttpWebRequest ret;
+            try
+            {
+                ret = creator(requestData);
+            }
+            finally
+            {
+                _createHttpRequestDepth--;
+            }
+            if (_createHttpRequestDepth == 0)
+            {
+                SignRequest(new HttpWebRequestAdapter(ret), requestData);
+            }
+            return ret;
+
+        }
+
+        protected override HttpWebRequest CreateHttpWebRequest(RequestData requestData)
+            => CreateWebRequestInternal(requestData, base.CreateHttpWebRequest);
+
+        protected override HttpWebRequest CreateWebRequest(RequestData requestData)
+            => CreateWebRequestInternal(requestData, base.CreateWebRequest);
+#endif
 
         private void SignRequest(IRequest request, RequestData requestData)
         {
