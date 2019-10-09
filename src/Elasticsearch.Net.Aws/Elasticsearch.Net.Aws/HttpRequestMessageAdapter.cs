@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETSTANDARD
+using System;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,3 +45,4 @@ namespace Elasticsearch.Net.Aws
         public Uri RequestUri => _message.RequestUri;
     }
 }
+#endif
