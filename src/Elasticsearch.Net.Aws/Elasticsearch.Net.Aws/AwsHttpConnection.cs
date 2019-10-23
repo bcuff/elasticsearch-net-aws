@@ -52,6 +52,7 @@ namespace Elasticsearch.Net.Aws
             return request;
         }
 #else
+        [ThreadStatic]
         static int _createHttpRequestDepth;
 
         HttpWebRequest CreateWebRequestInternal(RequestData requestData, Func<RequestData, HttpWebRequest> creator)
