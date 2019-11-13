@@ -4,6 +4,9 @@ using System.Net;
 using System.Net.Http;
 using Amazon;
 using Amazon.Runtime;
+#if NETSTANDARD
+using Amazon.Extensions.NETCore.Setup;
+#endif
 
 namespace Elasticsearch.Net.Aws
 {
@@ -14,6 +17,13 @@ namespace Elasticsearch.Net.Aws
     {
         private readonly AWSCredentials _credentials;
         private readonly RegionEndpoint _region;
+
+#if NETSTANDARD
+        public AwsHttpConnection(AWSOptions options)
+            : this(options.Credentials, options.Region)
+        {
+        }
+#endif
 
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection class with the specified AccessKey, SecretKey and Token.

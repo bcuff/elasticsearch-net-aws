@@ -3,7 +3,9 @@
 Add-on to [elasticsearch-net / NEST](https://github.com/elastic/elasticsearch-net) for using AWS's elasticsearch service.
 
 ## Install Package
-On Nuget
+
+On Nuget:
+
 * [Current Version 5.0+](https://www.nuget.org/packages/Elasticsearch.Net.Aws/)
 * [NEST / Elasticsearch.Net 2.X](https://www.nuget.org/packages/bcuff.Elasticsearch.Net.Aws-v2/)
 * [NEST / Elasticsearch.Net 1.X](https://www.nuget.org/packages/Elasticsearch.Net.Aws-v1/)
@@ -27,26 +29,37 @@ dotnet add package Elasticsearch.Net.Aws-v1
 
 ## Setup
 
-#### Elasticsearch.Net Version >= 2.0.2
+### Elasticsearch.Net Version >= 2.0.2
 
-**Use Package Elasticsearch.Net.Aws**
+Use Package [Elasticsearch.Net.Aws](https://www.nuget.org/packages/Elasticsearch.Net.Aws/).
+
+#### Typical Setup
 
 ```csharp
 // for NEST
 
-// if using app.config, environment variables, or roles
 // This constructor will look up AWS credentials in the
 // same way that the AWSSDK does automatically.
-var httpConnection = new AwsHttpConnection("us-east-1");
+var httpConnection = new AwsHttpConnection();
 
 var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
 var config = new ConnectionSettings(pool, httpConnection);
 var client = new ElasticClient(config);
 ```
 
+#### .NET Core Applications using IConfiguration
+
+```csharp
+IConfiguration config = Configuration;
+var options = config.GetAWSOptions();
+var httpConnection = new AwsHttpConnection(options);
+
+// same as above
+```
+
 #### Elasticsearch.Net Version 1.7.1
 
-**Use Package Elasticsearch.Net.Aws-v1**
+Use Package [Elasticsearch.Net.Aws-v1](https://www.nuget.org/packages/Elasticsearch.Net.Aws-v1)
 
 Source for this version is maintained on the version-1 branch
 
@@ -54,9 +67,9 @@ Source for this version is maintained on the version-1 branch
 // for NEST
 var client = new ElasticClient(settings, connection: new AwsHttpConnection(settings, new AwsSettings
 {
-	AccessKey = "My AWS access key",
-	SecretKey = "My AWS secret key",
-	Region = "us-east-1",
+    AccessKey = "My AWS access key",
+    SecretKey = "My AWS secret key",
+    Region = "us-east-1",
 }));
 ```
 
