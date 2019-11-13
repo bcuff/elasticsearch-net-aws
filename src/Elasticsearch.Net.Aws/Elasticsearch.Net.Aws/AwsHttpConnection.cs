@@ -19,6 +19,10 @@ namespace Elasticsearch.Net.Aws
         private readonly RegionEndpoint _region;
 
 #if NETSTANDARD
+        /// <summary>
+        /// Initializes a new instance of the AwsHttpConnection using AWSOptions.
+        /// </summary>
+        /// <param name="options">The AWS options.</param>
         public AwsHttpConnection(AWSOptions options)
             : this(options.Credentials, options.Region)
         {
