@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using Amazon;
 using Amazon.Runtime;
+using Amazon.Runtime.CredentialManagement;
 #if NETSTANDARD
 using Amazon.Extensions.NETCore.Setup;
 #endif
@@ -18,13 +19,34 @@ namespace Elasticsearch.Net.Aws
         private readonly AWSCredentials _credentials;
         private readonly RegionEndpoint _region;
 
+        static AWSCredentials GetCredentials()
+            => FallbackCredentialsFactory.GetCredentials()
+            ?? throw new Exception("Unable to obtain AWS Credentials.");
+
+        static RegionEndpoint GetRegion()
+            => FallbackRegionFactory.GetRegionEndpoint()
+            ?? throw new Exception("Unable to determine the correct AWS region. Please try providing it explicitly.");
+
 #if NETSTANDARD
+        static AWSCredentials GetCredentialsFromOptions(AWSOptions options)
+        {
+            var ret = options.Credentials;
+            if (ret != null) return ret;
+            if (!string.IsNullOrEmpty(options.Profile))
+            {
+                var chain = new CredentialProfileStoreChain(options.ProfilesLocation);
+                if (chain.TryGetAWSCredentials(options.Profile, out ret)) return ret;
+            }
+            return GetCredentials();
+        }
+
         /// <summary>
         /// Initializes a new instance of the AwsHttpConnection using AWSOptions.
         /// </summary>
         /// <param name="options">The AWS options.</param>
-        public AwsHttpConnection(AWSOptions options)
-            : this(options.Credentials, options.Region)
+        public AwsHttpConnection(AWSOptions options) : this(
+            GetCredentialsFromOptions(options),
+            options.Region ?? GetRegion())
         {
         }
 #endif
@@ -45,7 +67,7 @@ namespace Elasticsearch.Net.Aws
         /// </summary>
         /// <param name="region">AWS region</param>
         public AwsHttpConnection(string region)
-            : this(FallbackCredentialsFactory.GetCredentials(), RegionEndpoint.GetBySystemName(region))
+            : this(GetCredentials(), RegionEndpoint.GetBySystemName(region))
         {
         }
 
@@ -53,8 +75,8 @@ namespace Elasticsearch.Net.Aws
         /// Initializes a new instance of the AwsHttpConnection class with credentials from the Instance Profile service
         /// </summary>
         public AwsHttpConnection() : this(
-            FallbackCredentialsFactory.GetCredentials(),
-            FallbackRegionFactory.GetRegionEndpoint() ?? throw new Exception("Unable to determine the correct AWS region. Please try providing it explicitly."))
+            GetCredentials(),
+            GetRegion())
         {
         }
 
