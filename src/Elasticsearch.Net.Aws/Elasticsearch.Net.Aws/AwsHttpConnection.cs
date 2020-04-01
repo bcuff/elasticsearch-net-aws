@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
 #if NETSTANDARD
+using System.Net.Http;
 using Amazon.Extensions.NETCore.Setup;
 #endif
 

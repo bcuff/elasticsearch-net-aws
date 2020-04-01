@@ -4,7 +4,7 @@
     <VersionPrefix>7.0.4</VersionPrefix>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <AssemblyName>Elasticsearch.Net.Aws</AssemblyName>
-    <PackageId>Elasticsearch.Net.Aws</PackageId>
+    <PackageId>D2L.Elasticsearch.Net.Aws</PackageId>
     <PackageVersion>7.0.4</PackageVersion>
     <Authors>Brandon Cuff</Authors>
     <Description>Enables request signing necessary for using the AWS Elasticsearch service.</Description>
@@ -19,20 +19,18 @@
     <Version>7.0.4</Version>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <AssemblyOriginatorKeyFile>$(ProjectDir)..\..\..\key.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
-  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <Reference Include="System.Web" />
+  </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.*" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.1.1" />
     <PackageReference Include="AWSSDK.Core" Version="3.3.*" />
-    <PackageReference Include="Elasticsearch.Net" Version="7.0.0" />
+    <PackageReference Include="Elasticsearch.Net" Version="7.6.1" />
   </ItemGroup>
 
 </Project>
