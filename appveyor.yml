@@ -4,16 +4,15 @@ image: Visual Studio 2019
 skip_branch_with_pr: true
 
 configuration: Release
-platform: Any CPU
 
 before_build:
-  - dotnet restore src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
+  - ps: dotnet restore src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln --configuration "$env:CONFIGURATION" "-p:Version=$env:APPVEYOR_BUILD_VERSION"
 
 build_script:
-  - dotnet build src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
+  - ps: dotnet build src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln --configuration "$env:CONFIGURATION" "-p:Version=$env:APPVEYOR_BUILD_VERSION"
 
 test_script:
-  - dotnet test src/Elasticsearch.Net.Aws/ElasticSearch.Net.Aws.Tests/ElasticSearch.Net.Aws.Tests.csproj
+  - ps: dotnet test src/Elasticsearch.Net.Aws/ElasticSearch.Net.Aws.Tests/ElasticSearch.Net.Aws.Tests.csproj --configuration "Debug"
 
 artifacts:
   - path: '**\*.nupkg'

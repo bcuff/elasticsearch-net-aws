@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>7.0.4</VersionPrefix>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <AssemblyName>Elasticsearch.Net.Aws</AssemblyName>
     <PackageId>D2L.Elasticsearch.Net.Aws</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>7.0.4</PackageVersion>
     <Authors>Brandon Cuff</Authors>
     <Description>Enables request signing necessary for using the AWS Elasticsearch service.</Description>
     <Copyright>Copyright 2015</Copyright>
@@ -15,8 +13,6 @@
     <PackageReleaseNotes>Added AWSOptions overload.</PackageReleaseNotes>
     <PackageTags>elasticsearch elastic search aws amazon</PackageTags>
     <RepositoryUrl>https://github.com/bcuff/elasticsearch-net-aws</RepositoryUrl>
-    <AssemblyVersion>7.0.4</AssemblyVersion>
-    <FileVersion>7.0.4</FileVersion>
     <Version>7.0.4</Version>
   </PropertyGroup>
 
