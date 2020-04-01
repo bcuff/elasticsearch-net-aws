@@ -27,7 +27,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.1.1" />
     <PackageReference Include="AWSSDK.Core" Version="3.3.*" />
-    <PackageReference Include="Elasticsearch.Net" Version="7.0.0" />
+    <PackageReference Include="Elasticsearch.Net" Version="7.6.1" />
   </ItemGroup>
 
 </Project>
