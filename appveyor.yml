@@ -6,8 +6,11 @@ skip_branch_with_pr: true
 configuration: Release
 platform: Any CPU
 
-build:
-  project: src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
+before_build:
+  - dotnet restore src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
+
+build_script:
+  - dotnet build src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
 
 artifacts:
   - path: '**\*.nupkg'
