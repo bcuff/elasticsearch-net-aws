@@ -6,9 +6,6 @@ skip_branch_with_pr: true
 configuration: Release
 platform: Any CPU
 
-before_build:
-  - dotnet restore
-
 build:
   project: src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
 
