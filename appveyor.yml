@@ -1,0 +1,17 @@
+version: 7.0.4.{build}
+
+image: Visual Studio 2019
+skip_branch_with_pr: true
+
+configuration: Release
+platform: Any CPU
+
+before_build:
+  - dotnet restore
+
+build_script:
+  - ps:	dotnet build --configuration "$env:CONFIGURATION" "-p:Version=$env:APPVEYOR_BUILD_VERSION"
+
+artifacts:
+  - path: '**\*.nupkg'
+    name: NuGet
