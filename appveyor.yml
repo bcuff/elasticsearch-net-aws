@@ -9,8 +9,8 @@ platform: Any CPU
 before_build:
   - dotnet restore
 
-build_script:
-  - ps:	dotnet build --configuration "$env:CONFIGURATION" "-p:Version=$env:APPVEYOR_BUILD_VERSION"
+build:
+  project: src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
 
 artifacts:
   - path: '**\*.nupkg'
