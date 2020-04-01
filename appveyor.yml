@@ -1,0 +1,19 @@
+version: 7.6.1.{build}
+
+image: Visual Studio 2019
+skip_branch_with_pr: true
+
+configuration: Release
+
+before_build:
+  - ps: dotnet restore src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
+
+build_script:
+  - ps: dotnet build src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln --configuration "$env:CONFIGURATION" "-p:Version=$env:APPVEYOR_BUILD_VERSION"
+
+test_script:
+  - ps: dotnet test src/Elasticsearch.Net.Aws/ElasticSearch.Net.Aws.Tests/ElasticSearch.Net.Aws.Tests.csproj --configuration "Debug"
+
+artifacts:
+  - path: '**\*.nupkg'
+    name: NuGet
