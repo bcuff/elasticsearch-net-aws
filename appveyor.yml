@@ -12,6 +12,9 @@ before_build:
 build_script:
   - dotnet build src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
 
+test_script:
+  - dotnet test src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
+
 artifacts:
   - path: '**\*.nupkg'
     name: NuGet
