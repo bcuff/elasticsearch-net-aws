@@ -6,7 +6,7 @@ skip_branch_with_pr: true
 configuration: Release
 
 before_build:
-  - ps: dotnet restore src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln --configuration "$env:CONFIGURATION" "-p:Version=$env:APPVEYOR_BUILD_VERSION"
+  - ps: dotnet restore src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
 
 build_script:
   - ps: dotnet build src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln --configuration "$env:CONFIGURATION" "-p:Version=$env:APPVEYOR_BUILD_VERSION"
