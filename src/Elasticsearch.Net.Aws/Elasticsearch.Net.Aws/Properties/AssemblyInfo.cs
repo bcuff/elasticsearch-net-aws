@@ -10,6 +10,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("0de39cec-a00f-409a-9d45-aafa31c77ed9")]
 
-#if DEBUG
 [assembly: InternalsVisibleTo("ElasticSearch.Net.Aws.Tests")]
-#endif
