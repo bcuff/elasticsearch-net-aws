@@ -13,7 +13,7 @@ build_script:
   - dotnet build src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
 
 test_script:
-  - dotnet test src/Elasticsearch.Net.Aws/Elasticsearch.Net.Aws.sln
+  - dotnet test src/Elasticsearch.Net.Aws/ElasticSearch.Net.Aws.Tests/ElasticSearch.Net.Aws.Tests.csproj
 
 artifacts:
   - path: '**\*.nupkg'
