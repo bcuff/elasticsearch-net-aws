@@ -77,6 +77,7 @@ The `AwsHttpConnection` class is an implemenation of `IConnection` that will sig
 
 #### Serilog Sink Setup
 
+In Code
 ```csharp
   const string esUrl = "https://aws-es-thinger.us-west-1.es.amazonaws.com";
   Log.Logger = new LoggerConfiguration()
@@ -90,4 +91,25 @@ The `AwsHttpConnection` class is an implemenation of `IConnection` that will sig
                     }
                 })
                 .CreateLogger();
+```
+
+In Configuration
+```json
+{
+    "Serilog": {
+        "Using": ["Serilog", "Serilog.Exceptions", "Serilog.Sinks.Elasticsearch", "Serilog.Enrichers.Environment", "Serilog.Enrichers.Process"],
+        "MinimumLevel": "Debug",
+        "WriteTo": [{
+                "Name": "Elasticsearch",
+                "Args": {
+                    "nodeUris": "https://******.us-east-1.es.amazonaws.com",
+                    "numberOfShards": 5,
+                    "numberOfReplicas": 10,
+                    "connection": "Elasticsearch.Net.Aws.AwsHttpConnection, Elasticsearch.Net.Aws"
+                }
+            }
+        ],
+        "Enrich": ["FromLogContext", "WithMachineName", "WithExceptionDetails"],
+    }
+}
 ```
