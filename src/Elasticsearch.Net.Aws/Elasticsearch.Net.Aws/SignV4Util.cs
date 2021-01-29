@@ -3,6 +3,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,8 +19,8 @@ namespace Elasticsearch.Net.Aws
         public static void SignRequest(IRequest request, byte[] body, ImmutableCredentials credentials, string region, string service)
         {
             var date = DateTime.UtcNow;
-            var dateStamp = date.ToString("yyyyMMdd");
-            var amzDate = date.ToString("yyyyMMddTHHmmssZ");
+            var dateStamp = date.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+            var amzDate = date.ToString("yyyyMMddTHHmmssZ", CultureInfo.InvariantCulture);
             request.Headers.XAmzDate = amzDate;
 
             var signingKey = GetSigningKey(credentials.SecretKey, dateStamp, region, service);
