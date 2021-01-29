@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <AssemblyName>Elasticsearch.Net.Aws</AssemblyName>
     <PackageId>Elasticsearch.Net.Aws</PackageId>
-    <Version>7.0.5</Version>
+    <Version>7.0.6</Version>
     <Authors>Brandon Cuff</Authors>
     <Description>Enables request signing necessary for using the AWS Elasticsearch service.</Description>
     <Copyright>Copyright 2015</Copyright>
