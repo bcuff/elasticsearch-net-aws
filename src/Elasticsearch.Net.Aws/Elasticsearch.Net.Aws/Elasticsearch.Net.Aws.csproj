@@ -10,7 +10,7 @@
     <Copyright>Copyright 2015</Copyright>
     <PackageLicenseUrl>https://raw.githubusercontent.com/bcuff/elasticsearch-net-aws/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/bcuff/elasticsearch-net-aws</PackageProjectUrl>
-    <PackageReleaseNotes>Resolve package restore warning.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fix request signing for other cultures.</PackageReleaseNotes>
     <PackageTags>elasticsearch elastic search aws amazon</PackageTags>
     <RepositoryUrl>https://github.com/bcuff/elasticsearch-net-aws</RepositoryUrl>
   </PropertyGroup>
