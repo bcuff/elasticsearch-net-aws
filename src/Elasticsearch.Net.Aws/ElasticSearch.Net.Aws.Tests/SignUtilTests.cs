@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
+using System.Threading;
 using Amazon.Runtime;
 using Elasticsearch.Net.Aws;
 using NUnit.Framework;
@@ -91,6 +93,31 @@ namespace Tests
             var amzDate = _sampleRequest.Headers.XAmzDate;
             Assert.False(String.IsNullOrEmpty(amzDate));
             Trace.WriteLine("X-Amz-Date: " + amzDate);
+
+            var auth = _sampleRequest.Headers.Authorization;
+            Assert.False(String.IsNullOrEmpty(auth));
+            Trace.WriteLine("Authorize: " + auth);
+
+            var token = _sampleRequest.Headers.XAmzSecurityToken;
+            Assert.False(String.IsNullOrEmpty(token));
+            Trace.WriteLine("Token: " + token);
+        }
+
+        [Test]
+        public void SignRequest_should_apply_signature_to_request_right_culture()
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("th");
+
+            var creds = new SessionAWSCredentials("ExampleKey", "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", "token1")
+                .GetCredentials();
+            SignV4Util.SignRequest(_sampleRequest, _sampleBody, creds, "us-east-1", "iam");
+
+            var amzDateValue = _sampleRequest.Headers.XAmzDate;
+            Assert.False(String.IsNullOrEmpty(amzDateValue));
+            var amzDates = amzDateValue.Split(',');
+            Assert.AreEqual(2, amzDates.Length);
+            Assert.True(amzDates[1].StartsWith(DateTime.UtcNow.Year.ToString()));
+            Trace.WriteLine("X-Amz-Date: " + amzDateValue);
 
             var auth = _sampleRequest.Headers.Authorization;
             Assert.False(String.IsNullOrEmpty(auth));
