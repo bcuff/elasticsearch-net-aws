@@ -81,11 +81,10 @@ namespace Elasticsearch.Net.Aws
         }
 
 #if NETSTANDARD
-        protected override HttpRequestMessage CreateHttpRequestMessage(RequestData requestData)
+        protected override HttpMessageHandler CreateHttpClientHandler(RequestData requestData)
         {
-            var request = base.CreateHttpRequestMessage(requestData);
-            SignRequest(new HttpRequestMessageAdapter(request), requestData);
-            return request;
+            var innerHandler = base.CreateHttpClientHandler(requestData);
+            return new SigningHttpMessageHandler(_credentials, _region, innerHandler);
         }
 #else
         [ThreadStatic]
@@ -105,7 +104,7 @@ namespace Elasticsearch.Net.Aws
             }
             if (_createHttpRequestDepth == 0)
             {
-                SignRequest(new HttpWebRequestAdapter(ret), requestData);
+                SignRequest(new HttpWebRequestAdapter(ret, requestData));
             }
             return ret;
 
@@ -116,23 +115,9 @@ namespace Elasticsearch.Net.Aws
 
         protected override HttpWebRequest CreateWebRequest(RequestData requestData)
             => CreateWebRequestInternal(requestData, base.CreateWebRequest);
-#endif
 
-        private void SignRequest(IRequest request, RequestData requestData)
+        private void SignRequest(IRequest request)
         {
-            byte[] data = null;
-            if (requestData.PostData != null)
-            {
-                data = requestData.PostData.WrittenBytes;
-                if (data == null)
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        requestData.PostData.Write(ms, requestData.ConnectionSettings);
-                        data = ms.ToArray();
-                    }
-                }
-            }
             ImmutableCredentials credentials;
             try
             {
@@ -147,7 +132,8 @@ namespace Elasticsearch.Net.Aws
             {
                 throw new Exception("Unable to retrieve credentials required to sign the request.");
             }
-            SignV4Util.SignRequest(request, data, credentials, _region.SystemName, "es");
+            SignV4Util.SignRequestAsync(request, credentials, _region.SystemName, "es").Wait();
         }
+#endif
     }
 }

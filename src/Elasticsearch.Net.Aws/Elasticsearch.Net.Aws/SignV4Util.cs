@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Amazon.Runtime;
+using System.Threading.Tasks;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -16,16 +17,17 @@ namespace Elasticsearch.Net.Aws
     {
         static readonly char[] _datePartSplitChars = { 'T' };
 
-        public static void SignRequest(IRequest request, byte[] body, ImmutableCredentials credentials, string region, string service)
+        public static async Task SignRequestAsync(IRequest request, ImmutableCredentials credentials, string region, string service)
         {
+            await request.PrepareForSigningAsync().ConfigureAwait(false);
             var date = DateTime.UtcNow;
             var dateStamp = date.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
             var amzDate = date.ToString("yyyyMMddTHHmmssZ", CultureInfo.InvariantCulture);
             request.Headers.XAmzDate = amzDate;
 
             var signingKey = GetSigningKey(credentials.SecretKey, dateStamp, region, service);
-            var stringToSign = GetStringToSign(request, body, region, service);
-            Debug.Write("========== String to Sign ==========\r\n{0}\r\n========== String to Sign ==========\r\n", stringToSign);
+            var stringToSign = GetStringToSign(request, region, service);
+            Debug.Write($"========== String to Sign ==========\r\n{stringToSign}\r\n========== String to Sign ==========\r\n");
             var signature = signingKey.GetHmacSha256Hash(stringToSign).ToLowercaseHex();
             var auth = string.Format(
                 "AWS4-HMAC-SHA256 Credential={0}/{1}, SignedHeaders={2}, Signature={3}",
@@ -35,7 +37,7 @@ namespace Elasticsearch.Net.Aws
                 signature);
 
             request.Headers.Authorization = auth;
-            if (!String.IsNullOrWhiteSpace(credentials.Token))
+            if (!string.IsNullOrWhiteSpace(credentials.Token))
                 request.Headers.XAmzSecurityToken = credentials.Token;
         }
 
@@ -57,10 +59,10 @@ namespace Elasticsearch.Net.Aws
             }
         }
 
-        public static string GetStringToSign(IRequest request, byte[] data, string region, string service)
+        public static string GetStringToSign(IRequest request, string region, string service)
         {
-            var canonicalRequest = GetCanonicalRequest(request, data);
-            Debug.Write("========== Canonical Request ==========\r\n{0}\r\n========== Canonical Request ==========\r\n", canonicalRequest);
+            var canonicalRequest = GetCanonicalRequest(request);
+            Debug.Write($"========== Canonical Request ==========\r\n{canonicalRequest}\r\n========== Canonical Request ==========\r\n");
             var awsDate = request.Headers.XAmzDate;
             Debug.Assert(Regex.IsMatch(awsDate, @"\d{8}T\d{6}Z"));
             var datePart = awsDate.Split(_datePartSplitChars, 2)[0];
@@ -77,7 +79,7 @@ namespace Elasticsearch.Net.Aws
             return string.Format("{0}/{1}/{2}/aws4_request", date, region, service);
         }
 
-        public static string GetCanonicalRequest(IRequest request, byte[] data)
+        public static string GetCanonicalRequest(IRequest request)
         {
             var canonicalHeaders = request.GetCanonicalHeaders();
             var result = new StringBuilder();
@@ -91,7 +93,7 @@ namespace Elasticsearch.Net.Aws
             result.Append('\n');
             WriteSignedHeaders(canonicalHeaders, result);
             result.Append('\n');
-            WriteRequestPayloadHash(data, result);
+            WriteRequestPayloadHash(request.Content, result);
             return result.ToString();
         }
 
@@ -112,12 +114,19 @@ namespace Elasticsearch.Net.Aws
             return string.Join("/", segments);
         }
 
+        static bool ShouldSignHeader(string headerName)
+            => headerName.StartsWith("x-amz-")
+            || headerName == "content-type"
+            || headerName == "content-encoding"
+            || headerName == "accept-encoding"
+            || headerName == "date";
+
         private static Dictionary<string, string> GetCanonicalHeaders(this IRequest request)
         {
             var q = from string key in request.Headers.Keys
                     let headerName = key.ToLowerInvariant()
-                    where headerName != "connection" && headerName != "user-agent"
-                    let headerValues = string.Join(",",
+                    where ShouldSignHeader(headerName)
+                    let headerValues = string.Join(", ",
                         request.Headers
                         .GetValues(key) ?? Enumerable.Empty<string>()
                         .Select(v => v.Trimall())

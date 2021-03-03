@@ -1,17 +1,22 @@
 ﻿#if NETFRAMEWORK
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Elasticsearch.Net.Aws
 {
     class HttpWebRequestAdapter : IRequest, IHeaders
     {
         readonly HttpWebRequest _request;
-        public HttpWebRequestAdapter(HttpWebRequest request)
+        readonly RequestData _requestData;
+        byte[] _content;
+        public HttpWebRequestAdapter(HttpWebRequest request, RequestData requestData)
         {
             _request = request;
+            _requestData = requestData;
         }
 
         public IHeaders Headers => this;
@@ -41,6 +46,28 @@ namespace Elasticsearch.Net.Aws
         public IEnumerable<string> Keys => _request.Headers.AllKeys;
 
         public IEnumerable<string> GetValues(string name) => _request.Headers.GetValues(name);
+
+        public byte[] Content => _content ?? throw new InvalidOperationException("You must first call PrepareForSigningAsync");
+
+        public Task PrepareForSigningAsync()
+        {
+            if (_requestData.PostData == null)
+            {
+                _content = Array.Empty<byte>();
+                return Task.CompletedTask;
+            }
+            var data = _requestData.PostData.WrittenBytes;
+            if (data == null)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    _requestData.PostData.Write(ms, _requestData.ConnectionSettings);
+                    data = ms.ToArray();
+                }
+            }
+            _content = data;
+            return Task.CompletedTask;
+        }
     }
 }
 #endif
