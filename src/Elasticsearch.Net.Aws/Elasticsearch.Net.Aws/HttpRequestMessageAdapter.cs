@@ -3,6 +3,7 @@ using System;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -43,6 +44,35 @@ namespace Elasticsearch.Net.Aws
         public IHeaders Headers { get; private set; }
         public string Method => _message.Method.ToString();
         public Uri RequestUri => _message.RequestUri;
+
+        byte[] _content;
+        public byte[] Content => _content ?? throw new InvalidOperationException("You must first call PrepareForSigningAsync");
+
+        public Task PrepareForSigningAsync()
+        {
+            if (_message.Content == null)
+            {
+                _content = Array.Empty<byte>();
+                return Task.CompletedTask;
+            }
+            return PrepareForSigningWithContentReplacementAsync();
+        }
+
+        async Task PrepareForSigningWithContentReplacementAsync()
+        {
+            _content = await _message.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+            if (_message.Content is ByteArrayContent) return;
+            var newContent = new ByteArrayContent(_content);
+            foreach (var h in _message.Content.Headers)
+            {
+                if (h.Key == "Content-Length") continue;
+                foreach (var val in h.Value)
+                {
+                    newContent.Headers.TryAddWithoutValidation(h.Key, val);
+                }
+            }
+            _message.Content = newContent;
+        }
     }
 }
 #endif
