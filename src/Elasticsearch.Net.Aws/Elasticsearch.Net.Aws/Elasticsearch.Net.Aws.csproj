@@ -4,13 +4,13 @@
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <AssemblyName>Elasticsearch.Net.Aws</AssemblyName>
     <PackageId>Elasticsearch.Net.Aws</PackageId>
-    <Version>7.0.6</Version>
+    <Version>7.1.0</Version>
     <Authors>Brandon Cuff</Authors>
     <Description>Enables request signing necessary for using the AWS Elasticsearch service.</Description>
     <Copyright>Copyright 2015</Copyright>
     <PackageLicenseUrl>https://raw.githubusercontent.com/bcuff/elasticsearch-net-aws/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/bcuff/elasticsearch-net-aws</PackageProjectUrl>
-    <PackageReleaseNotes>Fix request signing for other cultures.</PackageReleaseNotes>
+    <PackageReleaseNotes>Upgrade AWS dependency to 3.7</PackageReleaseNotes>
     <PackageTags>elasticsearch elastic search aws amazon</PackageTags>
     <RepositoryUrl>https://github.com/bcuff/elasticsearch-net-aws</RepositoryUrl>
   </PropertyGroup>
@@ -22,12 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.*" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.*" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.1.1" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.*" />
+    <PackageReference Include="AWSSDK.Core" Version="3.7.*" />
     <PackageReference Include="Elasticsearch.Net" Version="7.0.0" />
   </ItemGroup>
 
