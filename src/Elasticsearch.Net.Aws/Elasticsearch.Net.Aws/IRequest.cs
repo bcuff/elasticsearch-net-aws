@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Elasticsearch.Net.Aws
 {
@@ -7,5 +8,7 @@ namespace Elasticsearch.Net.Aws
         IHeaders Headers { get; }
         string Method { get; }
         Uri RequestUri { get; }
+        Task PrepareForSigningAsync();
+        byte[] Content { get; }
     }
 }
