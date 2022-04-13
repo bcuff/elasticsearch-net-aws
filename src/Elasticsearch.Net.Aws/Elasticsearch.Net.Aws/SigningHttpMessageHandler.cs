@@ -15,6 +15,7 @@ namespace Elasticsearch.Net.Aws
         readonly AWSCredentials _credentials;
         readonly RegionEndpoint _region;
         readonly HttpMessageHandler _innerHandler;
+        bool _innerHandlerDisposed;
 
         public SigningHttpMessageHandler(AWSCredentials credentials, RegionEndpoint region, HttpMessageHandler innerHandler)
         {
@@ -32,7 +33,14 @@ namespace Elasticsearch.Net.Aws
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) _innerHandler.Dispose();
+            if (!_innerHandlerDisposed)
+            {
+                if (disposing)
+                {
+                    _innerHandler.Dispose();
+                }
+                _innerHandlerDisposed = true;
+            }
             base.Dispose();
         }
     }
