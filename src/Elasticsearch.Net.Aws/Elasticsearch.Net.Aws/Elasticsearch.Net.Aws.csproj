@@ -4,13 +4,13 @@
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <AssemblyName>Elasticsearch.Net.Aws</AssemblyName>
     <PackageId>Elasticsearch.Net.Aws</PackageId>
-    <Version>7.2.0</Version>
+    <Version>7.2.1</Version>
     <Authors>Brandon Cuff</Authors>
     <Description>Enables request signing necessary for using the AWS Elasticsearch service.</Description>
     <Copyright>Copyright 2015</Copyright>
     <PackageLicenseUrl>https://raw.githubusercontent.com/bcuff/elasticsearch-net-aws/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/bcuff/elasticsearch-net-aws</PackageProjectUrl>
-    <PackageReleaseNotes>Fix to support HTTP compression.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed stack overflow in Dispose method.</PackageReleaseNotes>
     <PackageTags>elasticsearch elastic search aws amazon</PackageTags>
     <RepositoryUrl>https://github.com/bcuff/elasticsearch-net-aws</RepositoryUrl>
   </PropertyGroup>
