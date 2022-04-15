@@ -41,7 +41,7 @@ namespace Elasticsearch.Net.Aws
                 }
                 _innerHandlerDisposed = true;
             }
-            base.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
