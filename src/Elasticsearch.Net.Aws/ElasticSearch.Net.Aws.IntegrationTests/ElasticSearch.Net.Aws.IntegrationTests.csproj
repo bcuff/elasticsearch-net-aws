@@ -19,7 +19,7 @@
     <PackageReference Include="NUnit" Version="3.7.*" />
     <PackageReference Include="NEST" Version="7.0.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
