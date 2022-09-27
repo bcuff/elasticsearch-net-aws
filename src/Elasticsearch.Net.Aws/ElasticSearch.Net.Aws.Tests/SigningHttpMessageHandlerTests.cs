@@ -20,6 +20,7 @@ namespace Tests
     [TestFixture]
     public class SigningHttpMessageHandlerTests
     {
+#if NETCOREAPP
         private class TestHandler : HttpClientHandler
         {
             public bool Disposed;
@@ -30,7 +31,6 @@ namespace Tests
             }
         }
 
-#if NETCOREAPP
         [Test]
         public void TestDispose()
         {
